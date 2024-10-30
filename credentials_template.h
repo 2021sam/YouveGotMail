@@ -1,0 +1,5 @@
+#define WIFI_SSID "YourSSID"
+#define WIFI_PASSWORD "YourPassword"
+#define AUTHOR_EMAIL "your_email@gmail.com"
+#define AUTHOR_PASSWORD "your_app_password"
+#define RECIPIENT_EMAIL "recipient_email@gmail.com"

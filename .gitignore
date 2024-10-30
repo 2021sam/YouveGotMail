@@ -1,0 +1,29 @@
+# Ignore build files
+*.bin
+*.elf
+*.hex
+*.o
+*.a
+
+# Ignore Arduino IDE specific files
+*.pde
+*.ino.swp
+
+# Ignore local configuration files
+credentials.h
+
+# Ignore Arduino libraries that are downloaded or installed
+/libraries/
+
+# Ignore temporary files created by IDEs
+*.tmp
+*.log
+
+# Ignore compiled object files
+*.class
+
+# Ignore user-specific files
+*.user
+
+# Ignore VSCode workspace settings
+.vscode/
