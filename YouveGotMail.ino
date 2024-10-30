@@ -1,7 +1,3 @@
-
-### Header Comment in the Code
-
-```cpp
 /*
  * You've Got Mail
  * 
@@ -127,27 +123,36 @@ float getDistance() {
   return distanceInMM / 10.0; // Convert to cm and return
 }
 
+#include "credentials.h" // Include your credentials file
+
 void sendEmail(float distance) {
-  // Set up the email message
-  SMTP_Message message;
-  message.sender.name = F("ESP Mail");
-  message.sender.email = AUTHOR_EMAIL;
-  message.subject = F("Distance Measurement Alert");
-  message.addRecipient(F("Admin"), RECIPIENT_EMAIL);
+    // Set up the email message
+    SMTP_Message message;
+    message.sender.name = F("ESP Mail");
+    message.sender.email = AUTHOR_EMAIL;
+    message.subject = F("Distance Measurement Alert");
 
-  String htmlMsg = "<p>The distance has changed significantly!</p><p>Previous distance: " + String(previousDistance) + " cm</p><p>Current distance: " + String(distance) + " cm</p>";
-  message.html.content = htmlMsg;
-  message.html.charSet = F("utf-8");
+    // Add recipients from the list defined in credentials.h
+    for (int i = 0; i < NUM_RECIPIENTS; i++) {
+        message.addRecipient(F("Recipient"), recipients[i]);
+    }
 
-  // Connect and send the email
-  if (!smtp.connect(&config)) {
-    Serial.printf("Connection error: %s\n", smtp.errorReason().c_str());
-    return;
-  }
+    // Print the number of recipients
+    Serial.printf("Number of recipients: %d\n", NUM_RECIPIENTS);
 
-  if (!MailClient.sendMail(&smtp, &message)) {
-    Serial.printf("Error sending email: %s\n", smtp.errorReason().c_str());
-  } else {
-    Serial.println("Email sent successfully!");
-  }
+    String htmlMsg = "<p>The distance has changed significantly!</p><p>Previous distance: " + String(previousDistance) + " cm</p><p>Current distance: " + String(distance) + " cm</p>";
+    message.html.content = htmlMsg;
+    message.html.charSet = F("utf-8");
+
+    // Connect and send the email
+    if (!smtp.connect(&config)) {
+        Serial.printf("Connection error: %s\n", smtp.errorReason().c_str());
+        return;
+    }
+
+    if (!MailClient.sendMail(&smtp, &message)) {
+        Serial.printf("Error sending email: %s\n", smtp.errorReason().c_str());
+    } else {
+        Serial.println("Email sent successfully!");
+    }
 }

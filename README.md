@@ -2,11 +2,11 @@
 
 ## Overview
 
-"You've Got Mail" is a smart mail notification system using an ESP32 microcontroller and a VL53L1X distance sensor. This project alerts you via email when mail is delivered to your mailbox. It continuously monitors the distance to the mailbox, and if a significant change is detected, it sends an email notification.
+"You've Got Mail" is a smart mail notification system using an ESP32 microcontroller and a VL53L1X distance sensor. This project alerts you via email when mail is delivered to your mailbox. It continuously monitors the distance from inside of the mailbox to the mailbox door, and if a significant change is detected, it sends an email notification.
 
 ## Features
 
-- Monitors distance to the mailbox.
+- Monitors distance to the mailbox door.
 - Sends email alerts upon detecting mail.
 - Configurable distance thresholds.
 - Wi-Fi connectivity for real-time notifications.
