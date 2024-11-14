@@ -47,6 +47,14 @@ String setup_WiFi(TFTDisplay& display) {
     Serial.println("\nWi-Fi connected");
     Serial.print("IP address: ");
     Serial.println(ipAddress);
+
+    delay(1000);
+    // Set the device's hostname after successful Wi-Fi connection
+    WiFi.setHostname(WIFI_HOSTNAME);  // Set the hostname for the device
+    Serial.print("Wi-Fi Hostname: ");
+    Serial.println(WIFI_HOSTNAME);
+    display.showStatusMessage("Wi-Fi Hostname: " + String(WIFI_HOSTNAME) );
+
     return ipAddress;  // Return the IP address
 }
 
