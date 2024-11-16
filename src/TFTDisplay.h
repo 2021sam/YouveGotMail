@@ -1,7 +1,7 @@
 #ifndef TFTDISPLAY_H
 #define TFTDISPLAY_H
 
-#include <TFT_eSPI.h>  // Use the correct TFT library for your display
+#include "TFT_eSPI.h"  // Use the correct TFT library for your display
 
 class TFTDisplay {
 public:

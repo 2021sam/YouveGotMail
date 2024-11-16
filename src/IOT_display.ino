@@ -1,9 +1,5 @@
 // IOT\IOT.ino
 #include <Arduino.h>
-
-// #include <SPI.h>
-// #include <TFT_eSPI.h>
-
 #include <Wire.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -68,7 +64,7 @@ Alert alertSystem(distanceSensor, lightSensor, mailService, deliveryStartHour, d
 
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     pinMode(LED_PIN, OUTPUT);
     // digitalWrite(LED_PIN, HIGH); // Turn off LED at startup
 

@@ -36,3 +36,4 @@ credentials.h
 .vscode/
 
 .DS_Store
+lib/TFT_eSPI/
