@@ -75,7 +75,7 @@ void setup() {
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
-    delay(1000);
+    delay(2000);
 
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");
