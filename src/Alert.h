@@ -39,6 +39,10 @@ public:
 
     // Method to blink an LED for a confirmation (e.g., during confirmation phase)
     void blinkLED(int delayTime);
+
+    int monitorLightSensor(int threshold);
+
 };
+
 
 #endif  // ALERT_H

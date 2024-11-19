@@ -133,11 +133,21 @@ void loop() {
     // Print RSSI, distance, and light level on one line
     Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
 
+
+
+
+
+
+
     // Display all data on the TFT screen
     display.showAllData(currentDistance, lux, rssi, currentTime);
     
     if (millis() - startTime > firstEmailDelay){
         String statusMessage = alertSystem.checkAndSendEmail();  // Check alert conditions and send email if necessary
+
+
+        int threshold = 100;
+        alertSystem.monitorLightSensor(threshold);
 
         if (statusMessage != "") {
         display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen

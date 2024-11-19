@@ -81,3 +81,16 @@ String Alert::checkAndSendEmail() {
     }
     return statusMessage;  // Return the status message
 }
+
+
+int Alert::monitorLightSensor(int threshold) {
+    // Trigger the light sensor and get the reading
+    int lux = lightSensor.getLightLevel();
+
+    // Check the light level against the threshold
+    if (lux >= threshold) {
+            Serial.println("Light level exceeds threshold. Mail detected!");
+            float currentDistance = distanceSensor.getDistance();
+            mailService.sendEmail(previousDistance, currentDistance, lux, true);
+    }
+}
