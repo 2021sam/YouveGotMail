@@ -1,21 +1,27 @@
 #include "DistanceSensor.h"
 #include <Wire.h>
 
-// Constructor
-// DistanceSensor::DistanceSensor() : onlineStatus(false) {
-//     // Optional: Add any initialization if needed
-// }
 
-
-// Constructor
-DistanceSensor::DistanceSensor(uint8_t address) : onlineStatus(false), i2cAddress(address) {
+// Constructor with additional parameters for SDA, SCL, and clock speed
+DistanceSensor::DistanceSensor(uint8_t address, uint8_t sda, uint8_t scl, uint32_t clockSpeed)
+    : onlineStatus(false), i2cAddress(address), sdaPin(sda), sclPin(scl), i2cClockSpeed(clockSpeed) {
     // Optionally initialize any member variables if needed
 }
 
 // Initialize the VL53L1X distance sensor and check if it is online
 bool DistanceSensor::begin() {
-    Wire.begin();  // Initialize the I2C bus
-    
+    Wire.begin(sdaPin, sclPin);  // Initialize I2C with specified pins
+    Wire.setClock(i2cClockSpeed); // Set the I2C clock speed
+    Serial.println("I2C initialized");
+
+    // Print debug information
+    Serial.print("SDA: ");
+    Serial.println(sdaPin);
+    Serial.print("SCL: ");
+    Serial.println(sclPin);
+    Serial.print("Clock: ");
+    Serial.println(i2cClockSpeed);
+
     bool initStatus = distanceSensor.begin();  // Get the return value of begin()
     Serial.print("distanceSensor.begin() = ");
     Serial.println(initStatus);

@@ -34,3 +34,7 @@
    ```bash
    git clone https://github.com/yourusername/YouveGotMail.git
    cd YouveGotMail
+
+  Key points about the LilyGO T-Display S3 pinout:
+    SDA pin: GPIO 17
+    SCL pin: GPIO 18

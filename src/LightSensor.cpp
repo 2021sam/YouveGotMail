@@ -8,7 +8,10 @@
 
 
 // Constructor with custom I2C address
-LightSensor::LightSensor(uint8_t address) : onlineStatus(false), i2cAddress(address) {}
+// LightSensor::LightSensor(uint8_t address) : onlineStatus(false), i2cAddress(address) {}
+// Constructor that accepts I2C address, SDA, SCL pins, and clock speed
+LightSensor::LightSensor(uint8_t address, uint8_t sdaPin, uint8_t sclPin, uint32_t clockSpeed)
+    : i2cAddress(address), onlineStatus(false), sdaPin(sdaPin), sclPin(sclPin), clockSpeed(clockSpeed) {}
 
 
 
@@ -29,7 +32,28 @@ LightSensor::LightSensor(uint8_t address) : onlineStatus(false), i2cAddress(addr
 
 // Initialize the BH1750 light sensor with a custom I2C address
 bool LightSensor::begin() {
-    Wire.begin();  // Initialize I2C bus
+    // Wire.begin();  // Initialize I2C bus
+    // // Wire.setClock(10000); // Reduce I2C speed to 50kHz
+    // Wire.begin(18, 17);  // Initialize I2C with specified pins
+    // // Wire.setClock(clockSpeed);         // Set the I2C clock speed
+    // Wire.setClock(5000); // Reduce I2C speed to 50kHz
+
+
+
+    // Initialize I2C with the specified pins and clock speed
+    Wire.begin(sdaPin, sclPin);
+    Wire.setClock(clockSpeed);
+
+    Serial.print("Light Sensor I2C initialized at address: 0x");
+    Serial.println(i2cAddress, HEX);
+    Serial.print("SDA: ");
+    Serial.println(sdaPin);
+    Serial.print("SCL: ");
+    Serial.println(sclPin);
+    Serial.print("Clock: ");
+    Serial.println(Wire.getClock());
+
+
 
     // Initialize BH1750 with the specified I2C address
     if (lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, i2cAddress)) {
