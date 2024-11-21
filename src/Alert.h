@@ -44,5 +44,4 @@ public:
 
 };
 
-
 #endif  // ALERT_H

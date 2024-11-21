@@ -138,24 +138,22 @@ void loop() {
     display.showAllData(currentDistance, lux, rssi, currentTime);
     
 
-    if (!distanceSensor.isOnline()) {
-            // Serial.println("Distance sensor is offline!");
-            // Attempt to reset sensor after a failure
-            distanceSensor.resetSensor();
+    if (distanceSensor.isOnline()) {
+        if (millis() - startTime > firstEmailDelay){
+            String statusMessage = alertSystem.checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
+
+            int threshold = 100;
+            // alertSystem.monitorLightSensor(threshold);
+
+            if (statusMessage != "") {
+            display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
+            delay(10000);
+            }
         }
-
-
-
-    if (millis() - startTime > firstEmailDelay){
-        String statusMessage = alertSystem.checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
-
-
-        int threshold = 100;
-        // alertSystem.monitorLightSensor(threshold);
-
-        if (statusMessage != "") {
-        display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
-        delay(10000);
+        else {
+            bool resurrectTOF = distanceSensor.resetSensor();
+            Serial.print("Resurrected TOF: ");
+            Serial.println(resurrectTOF);
         }
     }
     delay(2000); // Wait before the next measurement

@@ -41,9 +41,6 @@ bool DistanceSensor::begin() {
 
 
 
-
-
-
 bool DistanceSensor::resetSensor() {
     Serial.println("Attempting to reset the sensor...");
     
@@ -57,17 +54,12 @@ bool DistanceSensor::resetSensor() {
     // After waiting, attempt to reinitialize the sensor
     if (!begin()) {
         Serial.println("Failed to reinitialize the sensor.");
+        return false;
     } else {
         Serial.println("Sensor reset successfully.");
+        return true;
     }
 }
-
-
-
-
-
-
-
 
 
 // Set a new I²C address
@@ -99,16 +91,6 @@ float DistanceSensor::getDistance() {
     while (!distanceSensor.checkForDataReady()) {
         delay(1);  // Wait for data
     }
-
-    // unsigned long startTime = millis();
-    // while (!distanceSensor.checkForDataReady()) {
-    //     // Timeout after 1000ms (1 second) if no data is ready
-    //     if (millis() - startTime > 1000) {
-    //         distanceSensor.stopRanging();  // Stop ranging if timeout occurs
-    //         return -1.0;  // Return -1 if data was not ready in time
-    //     }
-    //     delay(1);  // Wait for data to be ready
-    // }
 
     int distanceInMM = distanceSensor.getDistance();  // Distance in mm
     distanceSensor.clearInterrupt();  // Clear interrupt

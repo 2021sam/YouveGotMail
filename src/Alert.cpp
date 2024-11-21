@@ -41,8 +41,6 @@ void Alert::blinkLED(int delayTime) {
 
 // Check the conditions and send an email if necessary
 String Alert::checkAndSendEmail(float currentDistance, float lux) {
-    // float currentDistance = distanceSensor.getDistance();
-    // float lux = lightSensor.getLightLevel();
     bool inDeliveryWindow = isWithinDeliveryWindow();
     String statusMessage = "";  // Variable to store the status message
 
