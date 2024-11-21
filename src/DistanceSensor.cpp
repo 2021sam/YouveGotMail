@@ -1,6 +1,9 @@
 #include "DistanceSensor.h"
 #include <Wire.h>
 
+unsigned long lastPowerOffTime = 0; // To track time when the power was last turned off
+unsigned long resetInterval = 60000; // 60 seconds
+
 
 // Constructor with additional parameters for SDA, SCL, and clock speed
 DistanceSensor::DistanceSensor(uint8_t address, uint8_t sda, uint8_t scl, uint32_t clockSpeed)
@@ -35,6 +38,35 @@ bool DistanceSensor::begin() {
         return false;  // Initialization failed
     }
 }
+
+
+
+
+
+
+bool DistanceSensor::resetSensor() {
+    Serial.println("Attempting to reset the sensor...");
+    
+    // Try to reinitialize the sensor after waiting for 60 seconds
+    lastPowerOffTime = millis(); // Reset the timer
+    while (millis() - lastPowerOffTime < resetInterval) {
+        // Wait for 60 seconds before resetting
+        delay(1000);  // Check every second if needed, or handle other tasks during this period
+    }
+
+    // After waiting, attempt to reinitialize the sensor
+    if (!begin()) {
+        Serial.println("Failed to reinitialize the sensor.");
+    } else {
+        Serial.println("Sensor reset successfully.");
+    }
+}
+
+
+
+
+
+
 
 
 

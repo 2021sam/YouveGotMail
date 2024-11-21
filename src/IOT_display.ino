@@ -65,7 +65,7 @@ Alert alertSystem(distanceSensor, lightSensor, mailService, deliveryStartHour, d
 
 void setup() {
     Serial.begin(115200);
-    pinMode(LED_PIN, OUTPUT);
+    // pinMode(LED_PIN, OUTPUT);
     // digitalWrite(LED_PIN, HIGH); // Turn off LED at startup
 
     display.begin();  // Initialize TFT display
@@ -134,17 +134,24 @@ void loop() {
     Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
 
 
-
-
     // Display all data on the TFT screen
     display.showAllData(currentDistance, lux, rssi, currentTime);
     
+
+    if (!distanceSensor.isOnline()) {
+            // Serial.println("Distance sensor is offline!");
+            // Attempt to reset sensor after a failure
+            distanceSensor.resetSensor();
+        }
+
+
+
     if (millis() - startTime > firstEmailDelay){
-        String statusMessage = alertSystem.checkAndSendEmail();  // Check alert conditions and send email if necessary
+        String statusMessage = alertSystem.checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
 
 
         int threshold = 100;
-        alertSystem.monitorLightSensor(threshold);
+        // alertSystem.monitorLightSensor(threshold);
 
         if (statusMessage != "") {
         display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen

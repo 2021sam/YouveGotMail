@@ -32,7 +32,7 @@ public:
     String getCurrentTime();
 
     // Method to check the conditions and send an email if necessary
-    String checkAndSendEmail();
+    String checkAndSendEmail(float currentDistance, float lux);
 
     // Method to check if the current time is within the delivery window (8 AM to 5 PM)
     bool isWithinDeliveryWindow();

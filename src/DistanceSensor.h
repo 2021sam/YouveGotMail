@@ -22,6 +22,7 @@ public:
     bool checkForDataReady(); // Check if data is ready
     void clearInterrupt(); // Clear the interrupt
     void stopRanging();  // Stop ranging
+    bool resetSensor();
 
 private:
     SFEVL53L1X distanceSensor;  // SparkFun VL53L1X sensor object
