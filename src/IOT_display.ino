@@ -45,8 +45,8 @@ MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, rec
 float previousDistance = 0;
 unsigned long startTime;
 const float distanceThresholdCM = 10.0;  // Threshold for distance change to trigger email
-const unsigned long firstEmailDelay = 5 * 60 * 1000; // 5 minute in milliseconds
-const unsigned long emailCooldown = 10000; // 10 seconds in milliseconds
+const unsigned long firstEmailDelay = 10 * 60 * 1000; // 10 minutes in milliseconds
+const unsigned long emailCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
 unsigned long lastEmailTime = 0;
 
 // Delivery window settings
@@ -132,9 +132,6 @@ void loop() {
     String currentTime = alertSystem.getCurrentTime();  // Get current time via Alert class
     // Print RSSI, distance, and light level on one line
     Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
-
-
-
 
 
 

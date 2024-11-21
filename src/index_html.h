@@ -24,6 +24,7 @@ const char pageContent[] PROGMEM = R"(
     <li><a href="/lux">Light Level</a></li>
     <li><a href="/rssi">Wi-Fi RSSI</a></li>
     <li><a href="/alert">Send Test Email</a></li>
+    <li><a href="/all">Auto Refresh All</a></li>
   </ul>
 </body>
 </html>

@@ -3,10 +3,6 @@
 #include "WebEndpoints.h"  // Include the header file for WebEndpoints
 #include "index_html.h" // Include the HTML content
 
-// Constructor
-// WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService)
-//     : server(server), mailService(mailService) {
-
 WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
                            DistanceSensor& distanceSensor, LightSensor& lightSensor)
     : server(server), mailService(mailService), 
@@ -19,6 +15,7 @@ WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService,
     server.on("/lux", HTTP_GET, [this]() { handleLux(); });
     server.on("/rssi", HTTP_GET, [this]() { handleRSSI(); });
     server.on("/alert", HTTP_GET, [this]() { handleEmailAlert(); });
+    server.on("/all", HTTP_GET, [this]() { handleSensorData(); });
     }
 
 
@@ -45,7 +42,6 @@ void WebEndpoints::handleDeviceInfo() {
     response += "<tr><th>CPU Cores</th><td>" + String(ESP.getChipCores()) + "</td></tr>";
     response += "<tr><th>Free Heap</th><td>" + String(ESP.getFreeHeap()) + " bytes</td></tr>";
     response += "<tr><th>Flash Size</th><td>" + String(ESP.getFlashChipSize()) + " bytes</td></tr>";
-    // response += "<tr><th>Free File System Space</th><td>" + String(freeSpace) + " bytes</td></tr>";
     response += "</table>";
     response += "</body></html>";
 
@@ -61,6 +57,39 @@ void WebEndpoints::handleDistance() {
     String response = "Distance: " + String(distance) + " cm";
     server.send(200, "text/plain", response);
 }
+
+
+void WebEndpoints::handleSensorData() {
+    // Get the current sensor values
+    int rssi = WiFi.RSSI();                  // Get the Wi-Fi signal strength
+    float lux = lightSensor.getLightLevel();  // Get the light level (lux)
+    float tof = distanceSensor.getDistance(); // Get the distance from the ToF sensor (in cm)
+
+    // Create an HTML response with auto-refresh
+    String response = "<html><head><style>"
+                      "body { font-family: Arial, sans-serif; }"
+                      "h1 { color: #2E8B57; }"
+                      "table { width: 50%; margin: 25px 0; border-collapse: collapse; }"
+                      "th, td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }"
+                      "</style></head><body>";
+    
+    response += "<h1>Sensor Data</h1>";
+    response += "<table>";
+    response += "<tr><th>RSSI</th><td>" + String(rssi) + " dBm</td></tr>";
+    response += "<tr><th>Light Level (Lux)</th><td>" + String(lux) + " lux</td></tr>";
+    response += "<tr><th>Distance (ToF)</th><td>" + String(tof) + " cm</td></tr>";
+    response += "</table>";
+    
+    // JavaScript to auto-refresh the page every second (1000 milliseconds)
+    response += "<script>setTimeout(function(){ location.reload(); }, 1000);</script>";  
+
+    response += "</body></html>";
+
+    // Send the response as HTML
+    server.send(200, "text/html", response);
+}
+
+
 
 // Handle the light level endpoint
 void WebEndpoints::handleLux() {

@@ -3,7 +3,10 @@
 Alert::Alert(DistanceSensor& distanceSensor, LightSensor& lightSensor, MailService& mailService,
              int deliveryStartHour, int deliveryEndHour)
     : distanceSensor(distanceSensor), lightSensor(lightSensor), mailService(mailService),
-      deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour) {}
+      deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour) {
+        lastEmailTime = millis();
+        // previousDistance = distanceSensor.getDistance();
+      }
 
 // Function to return the current time as a string
 String Alert::getCurrentTime() {
