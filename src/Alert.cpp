@@ -1,12 +1,18 @@
 #include "Alert.h"
 
-Alert::Alert(DistanceSensor& distanceSensor, LightSensor& lightSensor, MailService& mailService,
-             int deliveryStartHour, int deliveryEndHour)
-    : distanceSensor(distanceSensor), lightSensor(lightSensor), mailService(mailService),
+Alert::Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour)
+    : mailService(mailService),
       deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour) {
         lastEmailTime = millis();
-        // previousDistance = distanceSensor.getDistance();
       }
+
+
+void Alert::setPreviousDistance(float distance) {
+    previousDistance = distance;
+    Serial.printf("Previous distance manually set to: %.2f cm\n", previousDistance);
+}
+
+
 
 // Function to return the current time as a string
 String Alert::getCurrentTime() {
@@ -40,7 +46,7 @@ void Alert::blinkLED(int delayTime) {
 }
 
 // Check the conditions and send an email if necessary
-String Alert::checkAndSendEmail(float currentDistance, float lux) {
+String Alert::checkAndSendEmail(int currentDistance, int lux) {
     bool inDeliveryWindow = isWithinDeliveryWindow();
     String statusMessage = "";  // Variable to store the status message
 
@@ -57,7 +63,9 @@ String Alert::checkAndSendEmail(float currentDistance, float lux) {
                 // blinkLED(1000); // Blink LED for confirmation
                 Serial.printf("I will confirm the Previous Distance: %.2f cm\n", previousDistance);
                 delay(2000);
-                float confirmedDistance = distanceSensor.getDistance();
+
+                // float confirmedDistance = distanceSensor.getDistance();
+                float confirmedDistance = currentDistance;   // disable check
                 Serial.printf("Confirmed Distance: %.2f cm\n", confirmedDistance);
                 // statusMessage += "Confirmed Distance: " + String(confirmedDistance) + " cm\n";
 
@@ -71,27 +79,23 @@ String Alert::checkAndSendEmail(float currentDistance, float lux) {
                     statusMessage += "Alert canceled, distance is now safe.\n";
                 }
             }
-
-            // Update previous distance and last email time
-            previousDistance = currentDistance;
             lastEmailTime = millis();
-        } else {
-            // If the change in distance isn't enough, update the previous distance
-            previousDistance = currentDistance;
         }
     }
+    previousDistance = currentDistance;
     return statusMessage;  // Return the status message
 }
 
 
 int Alert::monitorLightSensor(int threshold) {
     // Trigger the light sensor and get the reading
-    int lux = lightSensor.getLightLevel();
+    // int lux = lightSensor.getLightLevel();
 
     // Check the light level against the threshold
-    if (lux >= threshold) {
-            Serial.println("Light level exceeds threshold. Mail detected!");
-            float currentDistance = distanceSensor.getDistance();
-            mailService.sendEmail(previousDistance, currentDistance, lux, true);
-    }
+    // if (lux >= threshold) {
+    //         Serial.println("Light level exceeds threshold. Mail detected!");
+    //         // float currentDistance = distanceSensor.getDistance();
+    //         mailService.sendEmail(previousDistance, currentDistance, lux, true);
+    // }
+    return 0;
 }
