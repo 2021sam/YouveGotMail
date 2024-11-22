@@ -11,8 +11,14 @@
 class WebEndpoints {
 public:
 // Constructor that takes references to existing sensor objects and a MailService pointer
+    // WebEndpoints(WebServer& server, MailService* mailService, 
+    //              DistanceSensor& distanceSensor, LightSensor& lightSensor);
+
+
+    // Constructor that takes references to systemLog and logIndex
     WebEndpoints(WebServer& server, MailService* mailService, 
-                 DistanceSensor& distanceSensor, LightSensor& lightSensor);
+                 DistanceSensor& distanceSensor, LightSensor& lightSensor,
+                 String* systemLog, int& logIndex);
 
 
     // Method declarations for handling different routes
@@ -23,9 +29,12 @@ public:
     void handleRSSI();
     void handleEmailAlert();
     void handleSensorData();
+    void handleLog();
 
 private:
     WebServer& server;  // Reference to the WebServer object
+    String* systemLog;   // Pointer to system log
+    int& logIndex;       // Reference to log index
 
     DistanceSensor& distanceSensor;
     LightSensor& lightSensor;

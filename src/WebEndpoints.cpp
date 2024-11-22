@@ -3,10 +3,20 @@
 #include "WebEndpoints.h"  // Include the header file for WebEndpoints
 #include "index_html.h" // Include the HTML content
 
+// WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
+//                            DistanceSensor& distanceSensor, LightSensor& lightSensor)
+//     : server(server), mailService(mailService), 
+//       distanceSensor(distanceSensor), lightSensor(lightSensor) {
+
+
+
+
 WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
-                           DistanceSensor& distanceSensor, LightSensor& lightSensor)
+                           DistanceSensor& distanceSensor, LightSensor& lightSensor,
+                           String* systemLog, int& logIndex)
     : server(server), mailService(mailService), 
-      distanceSensor(distanceSensor), lightSensor(lightSensor) {
+      distanceSensor(distanceSensor), lightSensor(lightSensor),
+      systemLog(systemLog), logIndex(logIndex) {
         
     // Define the routes and associate them with the corresponding handler functions
     server.on("/", HTTP_GET, [this]() { handleRoot(); });
@@ -16,6 +26,7 @@ WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService,
     server.on("/rssi", HTTP_GET, [this]() { handleRSSI(); });
     server.on("/alert", HTTP_GET, [this]() { handleEmailAlert(); });
     server.on("/all", HTTP_GET, [this]() { handleSensorData(); });
+    server.on("/log", HTTP_GET, [this]() { handleLog(); });
     }
 
 
@@ -122,4 +133,32 @@ bool WebEndpoints::isWithinDeliveryWindow() {
     struct tm* timeinfo = localtime(&now);
     int currentHour = timeinfo->tm_hour;
     return (currentHour >= 8 && currentHour < 17);  // Delivery window is between 8 AM and 5 PM
+}
+
+
+
+void WebEndpoints::handleLog() {
+    String response = "<html><head><style>"
+                      "body { font-family: Arial, sans-serif; }"
+                      "h1 { color: #2E8B57; }"
+                      "table { width: 50%; margin: 25px 0; border-collapse: collapse; }"
+                      "th, td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }"
+                      "</style></head><body>";
+
+    response += "<h1>System Log</h1>";
+    response += "<table>";
+    
+    // Display log entries
+    for (int i = 0; i < 10; i++) {
+        if (systemLog[i] != "") {
+            response += "<tr><td>" + String(i+1) + "</td><td>" + systemLog[i] + "</td></tr>";
+        }
+    }
+    
+    response += "</table>";
+    response += "<p><a href='/'>Go back</a></p>";
+    response += "</body></html>";
+
+    // Send the response as HTML
+    server.send(200, "text/html", response);
 }

@@ -37,7 +37,6 @@ TFTDisplay display;  // Create a TFTDisplay object
 // Instantiate the TFT display, sensors, and mail service
 DistanceSensor distanceSensor(DISTANCE_SENSOR_ADDRESS);  // Pass the address to the distance sensor
 LightSensor lightSensor(LIGHT_SENSOR_ADDRESS);  // Pass the address to the light sensor
-
 MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, recipients, NUM_RECIPIENTS);
 
 
@@ -53,9 +52,28 @@ unsigned long lastEmailTime = 0;
 const int deliveryStartHour = 8;  // 8 AM
 const int deliveryEndHour = 17;   // 5 PM
 
+
+// Log storage (simple circular buffer or array)
+String systemLog[10];  // Array to hold the log entries
+int logIndex = 0;  // Index to track where to add the new log entry
+
+void addToLog(Alert& alertSystem, String message) {
+    // Add a log entry and maintain a simple circular buffer
+    String timestamp = alertSystem.getCurrentTime();  // Get current time via the Alert system
+    String logMessage = "[" + timestamp + "] " + message + "\n";  // Add a timestamp and message to the log
+    Serial.println(logMessage);  // Print message to serial monitor for debugging
+
+    systemLog[logIndex] = logMessage;
+    logIndex = (logIndex + 1) % 10;  // Wrap around after 10 entries
+}
+
+
 WebServer server(80); // Web server listening on port 80
 // WebEndpoints endpoints(server, &mailService);       // Create WebEndpoints instance
-WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor);  // Pass sensor objects to WebEndpoints
+// WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor);  // Pass sensor objects to WebEndpoints
+// Create WebEndpoints instance and pass the system log and index
+WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor, systemLog, logIndex);
+
 
 
 // Alert alertSystem(distanceSensor, lightSensor, mailService);  // Alert system instance
@@ -154,6 +172,7 @@ void loop() {
             bool resurrectTOF = distanceSensor.resetSensor();
             Serial.print("Resurrected TOF: ");
             Serial.println(resurrectTOF);
+            addToLog(alertSystem, "Distance sensor is resurrected & back online.");
         }
     }
     delay(2000); // Wait before the next measurement
