@@ -133,6 +133,7 @@ void setup() {
     display.showStatusMessage("Setup Complete!");
     delay(2000);  // Give user time to see the final message
     startTime = millis();
+    addToLog(alertSystem, "Online startTime");
 }
 
 
@@ -165,6 +166,7 @@ void loop() {
 
             if (statusMessage != "") {
             display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
+            addToLog(alertSystem, statusMessage);
             delay(10000);
             }
         }
