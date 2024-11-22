@@ -47,6 +47,7 @@ const float distanceThresholdCM = 10.0;  // Threshold for distance change to tri
 const unsigned long firstEmailDelay = 10 * 60 * 1000; // 10 minutes in milliseconds
 const unsigned long emailCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
 unsigned long lastEmailTime = 0;
+unsigned long lastMeasurementTime = 0;  // Variable to track last measurement time
 
 // Delivery window settings
 const int deliveryStartHour = 8;  // 8 AM
@@ -93,6 +94,8 @@ void setup() {
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
+    // Add the IP address to the log
+    addToLog(alertSystem, "Device IP Address: " + ipAddress);
     delay(2000);
 
     // Configure time for Pacific Standard Time (UTC-8)
@@ -142,22 +145,19 @@ void loop() {
     server.handleClient();
 
     checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
-
-    float currentDistance = distanceSensor.getDistance();
-    float lux = lightSensor.getLightLevel();
-    int rssi = WiFi.RSSI();
-    // controlLED();
-
-    String currentTime = alertSystem.getCurrentTime();  // Get current time via Alert class
-    // Print RSSI, distance, and light level on one line
-    Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
-
-
-    // Display all data on the TFT screen
-    display.showAllData(currentDistance, lux, rssi, currentTime);
-    
-
+    unsigned long currentMillis = millis();  // Get current time
     if (distanceSensor.isOnline()) {
+
+        float currentDistance = distanceSensor.getDistance();
+        float lux = lightSensor.getLightLevel();
+        int rssi = WiFi.RSSI();
+        String currentTime = alertSystem.getCurrentTime();  // Get current time via Alert class
+        // Print RSSI, distance, and light level on one line
+        Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
+
+        // Display all data on the TFT screen
+        display.showAllData(currentDistance, lux, rssi, currentTime);
+
         if (millis() - startTime > firstEmailDelay){
             String statusMessage = alertSystem.checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
 
@@ -170,12 +170,18 @@ void loop() {
             delay(10000);
             }
         }
-        else {
-            bool resurrectTOF = distanceSensor.resetSensor();
-            Serial.print("Resurrected TOF: ");
-            Serial.println(resurrectTOF);
-            addToLog(alertSystem, "Distance sensor is resurrected & back online.");
-        }
     }
-    delay(2000); // Wait before the next measurement
+    else {
+        bool resurrectTOF = distanceSensor.resetSensor();
+        Serial.print("Resurrected TOF: ");
+        Serial.println(resurrectTOF);
+        if (resurrectTOF)
+            addToLog(alertSystem, "Distance sensor is resurrected & back online.");
+    }
+
+    // delay(2000); // Wait before the next measurement
+    // Handle measurements every 2 seconds (non-blocking)
+    if (currentMillis - lastMeasurementTime > 2000) {
+        lastMeasurementTime = currentMillis;  // Update the last measurement time
+    }
 }

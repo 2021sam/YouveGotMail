@@ -2,7 +2,7 @@
 #include <Wire.h>
 
 unsigned long lastPowerOffTime = 0; // To track time when the power was last turned off
-unsigned long resetInterval = 60000; // 60 seconds
+unsigned long resetInterval = 10 * 1000; // 60 seconds
 
 
 // Constructor with additional parameters for SDA, SCL, and clock speed
@@ -48,7 +48,8 @@ bool DistanceSensor::resetSensor() {
     lastPowerOffTime = millis(); // Reset the timer
     while (millis() - lastPowerOffTime < resetInterval) {
         // Wait for 60 seconds before resetting
-        delay(1000);  // Check every second if needed, or handle other tasks during this period
+        // delay(1000);  // Check every second if needed, or handle other tasks during this period
+        yield();
     }
 
     // After waiting, attempt to reinitialize the sensor
