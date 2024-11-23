@@ -43,7 +43,7 @@ MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, rec
 // Email-related variables
 unsigned long startTime;
 const float distanceThresholdCM = 10.0;  // Threshold for distance change to trigger email
-const unsigned long firstEmailDelay = 10 * 60 * 1000; // 10 minutes in milliseconds
+// const unsigned long firstEmailDelay = 10 * 60 * 1000; // 10 minutes in milliseconds
 const unsigned long emailCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
 unsigned long lastEmailTime = 0;
 unsigned long lastMeasurementTime = 0;  // Variable to track last measurement time
@@ -169,17 +169,15 @@ void loop() {
         // Display all data on the TFT screen
         display.showAllData(currentDistance, lux, rssi, currentTime);
 
-        if (millis() - startTime > firstEmailDelay){
-            String statusMessage = alert->checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
+        String statusMessage = alert->checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
 
-            int threshold = 100;
-            // alertSystem.monitorLightSensor(threshold);
+        int threshold = 100;
+        // alertSystem.monitorLightSensor(threshold);
 
-            if (statusMessage != "") {
-            display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
-            addToLog(*alert, statusMessage);
-            delay(10000);
-            }
+        if (statusMessage != "") {
+        display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
+        addToLog(*alert, statusMessage);
+        delay(10000);
         }
     }
     else {

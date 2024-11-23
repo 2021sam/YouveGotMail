@@ -17,18 +17,14 @@ private:
     // LightSensor& lightSensor;        // Reference to the light sensor
     MailService& mailService;        // Reference to the mail service
     float previousDistance = 0;      // Previous distance measurement
-    unsigned long lastEmailTime = 0; // Timestamp of the last email sent
+    // unsigned long lastEmailTime = 0; // Timestamp of the last email sent
+    unsigned long startDelayTime = 0; // Timestamp of the last email sent
     const int distanceThresholdCM = 10;  // Minimum distance change for alert (in cm)
-    const unsigned long emailCooldown = 60000; // Cooldown time between email alerts (in ms)
+    const unsigned long emailCooldown = 60 * 1000; // Cooldown time between email alerts (in ms)
     int deliveryStartHour;
     int deliveryEndHour;
 
 public:
-    // Constructor: Initializes sensors and mail service references
-    // Alert(DistanceSensor& distanceSensor, LightSensor& lightSensor, MailService& mailService,
-    //       int deliveryStartHour, int deliveryEndHour);
-
-
     Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour);
 
     void setPreviousDistance(float distance);
@@ -47,7 +43,6 @@ public:
     void blinkLED(int delayTime);
 
     int monitorLightSensor(int threshold);
-
 };
 
 #endif  // ALERT_H

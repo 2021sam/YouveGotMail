@@ -3,7 +3,7 @@
 Alert::Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour)
     : mailService(mailService),
       deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour) {
-        lastEmailTime = millis();
+        startDelayTime = millis();
       }
 
 
@@ -51,7 +51,7 @@ String Alert::checkAndSendEmail(int currentDistance, int lux) {
     String statusMessage = "";  // Variable to store the status message
 
     // Check if enough time has passed and the distance has changed significantly
-    if (millis() - lastEmailTime > emailCooldown) {
+    if (millis() - startDelayTime > emailCooldown) {
         if (abs(currentDistance - previousDistance) >= distanceThresholdCM) {
             if (inDeliveryWindow) {
                 // Send email during the delivery window
@@ -79,7 +79,7 @@ String Alert::checkAndSendEmail(int currentDistance, int lux) {
                     statusMessage += "Alert canceled, distance is now safe.\n";
                 }
             }
-            lastEmailTime = millis();
+            startDelayTime = millis();
         }
     }
     previousDistance = currentDistance;
