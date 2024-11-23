@@ -12,8 +12,6 @@ void Alert::setPreviousDistance(float distance) {
     Serial.printf("Previous distance manually set to: %.2f cm\n", previousDistance);
 }
 
-
-
 // Function to return the current time as a string
 String Alert::getCurrentTime() {
     // Get the current time from the system clock
@@ -27,7 +25,6 @@ String Alert::getCurrentTime() {
     // Return the formatted time as a String
     return String(buffer);
 }
-
 
 // Check if the current time is within the delivery window (8 AM to 5 PM)
 bool Alert::isWithinDeliveryWindow() {

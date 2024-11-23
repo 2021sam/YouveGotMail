@@ -43,9 +43,6 @@ MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, rec
 // Email-related variables
 unsigned long startTime;
 const float distanceThresholdCM = 10.0;  // Threshold for distance change to trigger email
-// const unsigned long firstEmailDelay = 10 * 60 * 1000; // 10 minutes in milliseconds
-const unsigned long emailCooldown = 10 * 60 * 1000; // 10 minutes in milliseconds
-unsigned long lastEmailTime = 0;
 unsigned long lastMeasurementTime = 0;  // Variable to track last measurement time
 
 // Delivery window settings
@@ -69,16 +66,7 @@ void addToLog(Alert& alertSystem, String message) {
 
 
 WebServer server(80); // Web server listening on port 80
-// WebEndpoints endpoints(server, &mailService);       // Create WebEndpoints instance
-// WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor);  // Pass sensor objects to WebEndpoints
-// Create WebEndpoints instance and pass the system log and index
 WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor, systemLog, logIndex);
-
-
-
-// Alert alertSystem(distanceSensor, lightSensor, mailService);  // Alert system instance
-// Pass the delivery window parameters to the Alert class constructor
-// Alert alertSystem(distanceSensor, lightSensor, mailService, deliveryStartHour, deliveryEndHour); 
 // Pointer for Alert class
 Alert* alert = nullptr;
 
@@ -90,13 +78,10 @@ void setup() {
 
     display.begin();  // Initialize TFT display
     display.showStatusMessage("Initializing...");  // Show a message on TFT to indicate startup
-    // delay(2000);  // Give user time to see the message
     
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
-    // Add the IP address to the log
-    // addToLog(alertSystem, "Device IP Address: " + ipAddress);
     delay(2000);
 
     // Configure time for Pacific Standard Time (UTC-8)
