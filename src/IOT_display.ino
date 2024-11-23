@@ -22,6 +22,7 @@
 #include "Alert.h"
 #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
 #include "WiFiManager.h"  // Include the new WiFiManager header  -- After credentials.h are included.
+#include "GlobalUtils.h"
 
 
 #define LED_PIN 21
@@ -31,7 +32,6 @@ TFTDisplay display;  // Create a TFTDisplay object
 // Define I²C addresses for both sensors
 #define DISTANCE_SENSOR_ADDRESS 0x29  // Custom I²C address for the distance sensor
 #define LIGHT_SENSOR_ADDRESS 0x23    // I²C address for the light sensor (default 0x23)
-// #define LIGHT_SENSOR_ADDRESS 0x5C  // Change to 0x5C if you're using this address
 
 
 // Instantiate the TFT display, sensors, and mail service
@@ -48,22 +48,6 @@ unsigned long lastMeasurementTime = 0;  // Variable to track last measurement ti
 // Delivery window settings
 const int deliveryStartHour = 8;  // 8 AM
 const int deliveryEndHour = 17;   // 5 PM
-
-
-// Log storage (simple circular buffer or array)
-String systemLog[10];  // Array to hold the log entries
-int logIndex = 0;  // Index to track where to add the new log entry
-
-void addToLog(Alert& alertSystem, String message) {
-    // Add a log entry and maintain a simple circular buffer
-    String timestamp = alertSystem.getCurrentTime();  // Get current time via the Alert system
-    String logMessage = "[" + timestamp + "] " + message + "\n";  // Add a timestamp and message to the log
-    Serial.println(logMessage);  // Print message to serial monitor for debugging
-
-    systemLog[logIndex] = logMessage;
-    logIndex = (logIndex + 1) % 10;  // Wrap around after 10 entries
-}
-
 
 WebServer server(80); // Web server listening on port 80
 WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor, systemLog, logIndex);
@@ -92,14 +76,8 @@ void setup() {
 
     // Initialize the distance sensor
     distanceSensor.begin();  // Get the return value of begin()
-
-    // Assuming distanceSensor is initialized and begin() was called earlier
     String statusMessage = "Distance Sensor online status: ";
-
-    // Append "Online" or "Offline" based on the result of distanceSensor.isOnline()
     statusMessage += distanceSensor.isOnline() ? "Online" : "Offline";
-
-    // Now, send this status message to your display and serial monitor
     display.showStatusMessage(statusMessage);  // Display the message on the TFT screen
     Serial.println(statusMessage);  // Output the same status to the serial monitor
 
@@ -110,29 +88,22 @@ void setup() {
     float initialDistance = distanceSensor.getDistance();
     alert = new Alert(mailService, deliveryStartHour, deliveryEndHour);
     alert->setPreviousDistance(initialDistance);  // Set the initial distance in Alert
-    addToLog(*alert, "Device IP Address: " + ipAddress);
-    addToLog(*alert, "Initial Distance: " + String(initialDistance));
+    addToLog("Device IP Address: " + ipAddress);
+    addToLog("Initial Distance: " + String(initialDistance));
 
     // Initialize light sensor
-    if (!lightSensor.begin()) {
-        String errorMessage = "Light sensor initialization failed!";
-        Serial.println(errorMessage);
-        display.showStatusMessage(errorMessage);
-        addToLog(*alert, errorMessage);  // Add the lux reading to the system log
-    } else {
-        // Log initial lux value
-        float initialLux = lightSensor.getLightLevel();
-        String luxMessage = "Initial Lux: " + String(initialLux);
-        addToLog(*alert, luxMessage);  // Add the lux reading to the system log
-        display.showStatusMessage(luxMessage);  // Display lux on the screen
-    }
+    lightSensor.begin();
+    float initialLux = lightSensor.getLightLevel();
+    String luxMessage = "Initial Lux: " + String(initialLux);
+    addToLog(luxMessage);  // Add the lux reading to the system log
+    display.showStatusMessage(luxMessage);  // Display lux on the screen
     delay(2000);
 
     // Initialize the TFT display
     display.showStatusMessage("Setup Complete!");
     delay(2000);  // Give user time to see the final message
     startTime = millis();
-    addToLog(*alert, "Online startTime");
+    addToLog("Online startTime");
 }
 
 
@@ -142,12 +113,12 @@ void loop() {
 
     checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
     unsigned long currentMillis = millis();  // Get current time
-    if (distanceSensor.isOnline()) {
+    if (!distanceSensor.isOnline()) {
 
         float currentDistance = distanceSensor.getDistance();
         float lux = lightSensor.getLightLevel();
         int rssi = WiFi.RSSI();
-        String currentTime = alert->getCurrentTime();  // Get current time via Alert class
+        String currentTime = getCurrentTime();  // Get current time via Alert class
         // Print RSSI, distance, and light level on one line
         Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
 
@@ -161,7 +132,7 @@ void loop() {
 
         if (statusMessage != "") {
         display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
-        addToLog(*alert, statusMessage);
+        addToLog(statusMessage);
         delay(10000);
         }
     }
@@ -170,11 +141,12 @@ void loop() {
         Serial.print("Resurrected TOF: ");
         Serial.println(resurrectTOF);
         if (resurrectTOF)
-            addToLog(*alert, "Distance sensor is resurrected & back online.");
+            addToLog("Distance sensor is resurrected & back online.");
     }
 
     // Handle measurements every 2 seconds (non-blocking)
-    if (currentMillis - lastMeasurementTime > 2000) {
-        lastMeasurementTime = currentMillis;  // Update the last measurement time
-    }
+    // if (currentMillis - lastMeasurementTime > 3000) {
+    //     lastMeasurementTime = currentMillis;  // Update the last measurement time
+    // }
+    delay(1000);
 }

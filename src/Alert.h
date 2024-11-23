@@ -31,7 +31,7 @@ public:
 
 
     // Method to get the current time as a string (to be printed in IOT.ino)
-    String getCurrentTime();
+    // String getCurrentTime();
 
     // Method to check the conditions and send an email if necessary
     String checkAndSendEmail(int currentDistance, int lux);

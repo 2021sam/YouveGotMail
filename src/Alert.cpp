@@ -12,19 +12,19 @@ void Alert::setPreviousDistance(float distance) {
     Serial.printf("Previous distance manually set to: %.2f cm\n", previousDistance);
 }
 
-// Function to return the current time as a string
-String Alert::getCurrentTime() {
-    // Get the current time from the system clock
-    time_t now = time(nullptr);
-    struct tm* timeinfo = localtime(&now);
+// // Function to return the current time as a string
+// String Alert::getCurrentTime() {
+//     // Get the current time from the system clock
+//     time_t now = time(nullptr);
+//     struct tm* timeinfo = localtime(&now);
 
-    // Format the time into a readable string
-    char buffer[30];  // Buffer size of 30 is enough for formatted time string
-    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+//     // Format the time into a readable string
+//     char buffer[30];  // Buffer size of 30 is enough for formatted time string
+//     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
 
-    // Return the formatted time as a String
-    return String(buffer);
-}
+//     // Return the formatted time as a String
+//     return String(buffer);
+// }
 
 // Check if the current time is within the delivery window (8 AM to 5 PM)
 bool Alert::isWithinDeliveryWindow() {
