@@ -111,8 +111,16 @@ void loop() {
     // Handle incoming HTTP requests
     server.handleClient();
 
-    checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
     unsigned long currentMillis = millis();  // Get current time
+    if (currentMillis - lastMeasurementTime > 3000) {
+        lastMeasurementTime = currentMillis;  // Update the last measurement time
+        scheduledTasks();
+    }
+}
+
+void scheduledTasks(){
+    checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
+
     if (!distanceSensor.isOnline()) {
 
         float currentDistance = distanceSensor.getDistance();
@@ -143,10 +151,4 @@ void loop() {
         if (resurrectTOF)
             addToLog("Distance sensor is resurrected & back online.");
     }
-
-    // Handle measurements every 2 seconds (non-blocking)
-    // if (currentMillis - lastMeasurementTime > 3000) {
-    //     lastMeasurementTime = currentMillis;  // Update the last measurement time
-    // }
-    delay(1000);
 }
