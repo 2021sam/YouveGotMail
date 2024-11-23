@@ -121,7 +121,7 @@ void loop() {
 void scheduledTasks(){
     checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
 
-    if (!distanceSensor.isOnline()) {
+    if (distanceSensor.isOnline()) {
 
         float currentDistance = distanceSensor.getDistance();
         float lux = lightSensor.getLightLevel();
