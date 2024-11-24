@@ -37,3 +37,4 @@ credentials.h
 
 .DS_Store
 lib/TFT_eSPI/
+src/*.ino.cpp
