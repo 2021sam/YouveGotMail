@@ -62,14 +62,14 @@ void setup() {
 
     display.begin();  // Initialize TFT display
     display.showStatusMessage("Initializing...");  // Show a message on TFT to indicate startup
-    
+
+    // Configure time for Pacific Standard Time (UTC-8)
+    configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
+
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
     delay(2000);
-
-    // Configure time for Pacific Standard Time (UTC-8)
-    configTime(-8 * 3600, 0, "pool.ntp.org");
 
     // Initialize sensors
     Wire.begin();
