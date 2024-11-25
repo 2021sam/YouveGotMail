@@ -112,7 +112,7 @@ void loop() {
     server.handleClient();
 
     unsigned long currentMillis = millis();  // Get current time
-    if (currentMillis - lastMeasurementTime > 3000) {
+    if (currentMillis - lastMeasurementTime > 1000) {
         lastMeasurementTime = currentMillis;  // Update the last measurement time
         scheduledTasks();
     }

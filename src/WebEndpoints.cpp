@@ -76,6 +76,16 @@ void WebEndpoints::handleSensorData() {
     float lux = lightSensor.getLightLevel();  // Get the light level (lux)
     float tof = distanceSensor.getDistance(); // Get the distance from the ToF sensor (in cm)
 
+    // Update min and max values
+    if (rssi < minRSSI) minRSSI = rssi;
+    if (rssi > maxRSSI) maxRSSI = rssi;
+
+    if (lux < minLux) minLux = lux;
+    if (lux > maxLux) maxLux = lux;
+
+    if (tof < minTof) minTof = tof;
+    if (tof > maxTof) maxTof = tof;
+
     // Create an HTML response with auto-refresh
     String response = "<html><head><style>"
                       "body { font-family: Arial, sans-serif; }"
@@ -86,9 +96,10 @@ void WebEndpoints::handleSensorData() {
     
     response += "<h1>Sensor Data</h1>";
     response += "<table>";
-    response += "<tr><th>RSSI</th><td>" + String(rssi) + " dBm</td></tr>";
-    response += "<tr><th>Light Level (Lux)</th><td>" + String(lux) + " lux</td></tr>";
-    response += "<tr><th>Distance (ToF)</th><td>" + String(tof) + " cm</td></tr>";
+    response += "<tr><th>Parameter</th><th>Current</th><th>Min</th><th>Max</th></tr>";
+    response += "<tr><td>RSSI (dBm)</td><td>" + String(rssi) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
+    response += "<tr><td>Light Level (Lux)</td><td>" + String(lux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
+    response += "<tr><td>Distance (ToF cm)</td><td>" + String(tof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
     response += "</table>";
     
     // JavaScript to auto-refresh the page every second (1000 milliseconds)
