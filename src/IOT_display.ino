@@ -123,7 +123,6 @@ void scheduledTasks(){
     int rssi = WiFi.RSSI();
 
     if (distanceSensor.isOnline()) {
-        // int rssi = WiFi.RSSI();
         float lux = lightSensor.getLightLevel();
         float currentDistance = distanceSensor.getDistance();
 
@@ -136,15 +135,6 @@ void scheduledTasks(){
         display.showAllData(currentDistance, lux, rssi, currentTime);
 
         String statusMessage = alert->checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
-
-        // int threshold = 100;
-        // alertSystem.monitorLightSensor(threshold);
-
-        // if (statusMessage != "") {
-        // display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
-        // addToLog(statusMessage);
-        // delay(10000);
-        // }
     }
     else {
         updateSensorValues(rssi, -1, -1);
