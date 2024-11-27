@@ -56,7 +56,8 @@ void updateSensorValues(int rssi, float lux, float tof) {
 
         if (currentTof < previousTof + 1)
         {
-            maxTof_inClosedState = tof;
+            if (tof > maxTof_inClosedState)
+                maxTof_inClosedState = tof;
         }
 
         if (currentTof > previousTof + openThreshold)
