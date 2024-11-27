@@ -120,9 +120,10 @@ void loop() {
 
 void scheduledTasks(){
     checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
+    int rssi = WiFi.RSSI();
 
     if (distanceSensor.isOnline()) {
-        int rssi = WiFi.RSSI();
+        // int rssi = WiFi.RSSI();
         float lux = lightSensor.getLightLevel();
         float currentDistance = distanceSensor.getDistance();
 
@@ -146,6 +147,7 @@ void scheduledTasks(){
         // }
     }
     else {
+        updateSensorValues(rssi, -1, -1);
         bool resurrectTOF = distanceSensor.resetSensor();
         Serial.print("Resurrected TOF: ");
         Serial.println(resurrectTOF);
