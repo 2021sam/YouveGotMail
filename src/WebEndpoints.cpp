@@ -12,12 +12,9 @@
 
 
 WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
-                           DistanceSensor& distanceSensor, LightSensor& lightSensor,
-                           String* systemLog, int& logIndex)
-    : server(server), mailService(mailService), 
-      distanceSensor(distanceSensor), lightSensor(lightSensor),
+                           String* systemLog, int& logIndex) : server(server), mailService(mailService),
       systemLog(systemLog), logIndex(logIndex) {
-        
+
     // Define the routes and associate them with the corresponding handler functions
     server.on("/", HTTP_GET, [this]() { handleRoot(); });
     server.on("/device", HTTP_GET, [this](){ handleDeviceInfo(); }); // Use the new device info endpoint
@@ -64,28 +61,12 @@ void WebEndpoints::handleDeviceInfo() {
 
 // Handle the distance endpoint
 void WebEndpoints::handleDistance() {
-    float distance = distanceSensor.getDistance();
-    String response = "Distance: " + String(distance) + " cm";
+    String response = "Distance: " + String(currentTof) + " cm";
     server.send(200, "text/plain", response);
 }
 
 
 void WebEndpoints::handleSensorData() {
-    // Get the current sensor values
-    int rssi = WiFi.RSSI();                  // Get the Wi-Fi signal strength
-    float lux = lightSensor.getLightLevel();  // Get the light level (lux)
-    float tof = distanceSensor.getDistance(); // Get the distance from the ToF sensor (in cm)
-
-    // Update min and max values
-    if (rssi < minRSSI) minRSSI = rssi;
-    if (rssi > maxRSSI) maxRSSI = rssi;
-
-    if (lux < minLux) minLux = lux;
-    if (lux > maxLux) maxLux = lux;
-
-    if (tof < minTof) minTof = tof;
-    if (tof > maxTof) maxTof = tof;
-
     // Create an HTML response with auto-refresh
     String response = "<html><head><style>"
                       "body { font-family: Arial, sans-serif; }"
@@ -97,9 +78,12 @@ void WebEndpoints::handleSensorData() {
     response += "<h1>Sensor Data</h1>";
     response += "<table>";
     response += "<tr><th>Parameter</th><th>Current</th><th>Min</th><th>Max</th></tr>";
-    response += "<tr><td>RSSI (dBm)</td><td>" + String(rssi) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
-    response += "<tr><td>Light Level (Lux)</td><td>" + String(lux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
-    response += "<tr><td>Distance (ToF cm)</td><td>" + String(tof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
+    // response += "<tr><td>RSSI (dBm)</td><td>" + String(rssi) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
+    // response += "<tr><td>Light Level (Lux)</td><td>" + String(lux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
+    // response += "<tr><td>Distance (ToF cm)</td><td>" + String(tof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
+        response += "<tr><td>RSSI (dBm)</td><td>" + String(currentRSSI) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
+    response += "<tr><td>Light Level (Lux)</td><td>" + String(currentLux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
+    response += "<tr><td>Distance (ToF cm)</td><td>" + String(currentTof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
     response += "</table>";
     
     // JavaScript to auto-refresh the page every second (1000 milliseconds)
@@ -115,26 +99,24 @@ void WebEndpoints::handleSensorData() {
 
 // Handle the light level endpoint
 void WebEndpoints::handleLux() {
-    float lux = lightSensor.getLightLevel();
-    String response = "Light Level: " + String(lux) + " lux";
+    String response = "Light Level: " + String(currentLux) + " lux";
     server.send(200, "text/plain", response);
 }
 
 // Handle the RSSI endpoint
 void WebEndpoints::handleRSSI() {
-    int rssi = WiFi.RSSI();
-    String response = "Wi-Fi RSSI: " + String(rssi) + " dBm";
+    String response = "Wi-Fi RSSI: " + String(currentRSSI) + " dBm";
     server.send(200, "text/plain", response);
 }
 
 // Handle the email alert endpoint
 void WebEndpoints::handleEmailAlert() {
 
-    float currentDistance = distanceSensor.getDistance();
-    float lightLevel = lightSensor.getLightLevel();
-    previousDistance = currentDistance;
+    float currentDistance = currentTof;
+    float lightLevel = currentLux;
+    previousDistance = previousTof;
 
-    mailService->sendEmail(previousDistance, currentDistance, lightSensor.getLightLevel(), isWithinDeliveryWindow());
+    mailService->sendEmail(previousDistance, currentDistance, lightLevel, isWithinDeliveryWindow());
     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
 }
 

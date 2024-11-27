@@ -12,19 +12,6 @@ void Alert::setPreviousDistance(float distance) {
     Serial.printf("Previous distance manually set to: %.2f cm\n", previousDistance);
 }
 
-// // Function to return the current time as a string
-// String Alert::getCurrentTime() {
-//     // Get the current time from the system clock
-//     time_t now = time(nullptr);
-//     struct tm* timeinfo = localtime(&now);
-
-//     // Format the time into a readable string
-//     char buffer[30];  // Buffer size of 30 is enough for formatted time string
-//     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-
-//     // Return the formatted time as a String
-//     return String(buffer);
-// }
 
 // Check if the current time is within the delivery window (8 AM to 5 PM)
 bool Alert::isWithinDeliveryWindow() {
@@ -42,46 +29,22 @@ void Alert::blinkLED(int delayTime) {
     delay(delayTime);
 }
 
-// Check the conditions and send an email if necessary
+
 String Alert::checkAndSendEmail(int currentDistance, int lux) {
-    bool inDeliveryWindow = isWithinDeliveryWindow();
-    String statusMessage = "";  // Variable to store the status message
+    String statusMessage = "";  // Status message to return
 
-    // Check if enough time has passed and the distance has changed significantly
-    if (millis() - startDelayTime > emailCooldown) {
-        if (abs(currentDistance - previousDistance) >= distanceThresholdCM) {
-            if (inDeliveryWindow) {
-                // Send email during the delivery window
-                mailService.sendEmail(previousDistance, currentDistance, lux, true);
-                Serial.println("Email sent: Delivery window active.");
-                statusMessage += "Email sent: Delivery window active.\n";
-            } else {
-                // Outside the delivery window, confirm the alert
-                // blinkLED(1000); // Blink LED for confirmation
-                Serial.printf("I will confirm the Previous Distance: %.2f cm\n", previousDistance);
-                delay(2000);
-
-                // float confirmedDistance = distanceSensor.getDistance();
-                float confirmedDistance = currentDistance;   // disable check
-                Serial.printf("Confirmed Distance: %.2f cm\n", confirmedDistance);
-                // statusMessage += "Confirmed Distance: " + String(confirmedDistance) + " cm\n";
-
-                if (abs(confirmedDistance - previousDistance) >= distanceThresholdCM) {
-                      // Get the current time as a string
-                    mailService.sendEmail(previousDistance, confirmedDistance, lux, false);
-                    Serial.println("Email sent: Outside delivery window, alert confirmed.");
-                    statusMessage += "Email sent: Outside delivery window, alert confirmed.\n";
-                } else {
-                    Serial.println("Alert canceled, distance is now safe.");
-                    statusMessage += "Alert canceled, distance is now safe.\n";
-                }
-            }
-            startDelayTime = millis();
-        }
+    if (mail_alert)
+    {
+        mail_alert = false;
+        mailService.sendEmail(previousTof, currentDistance, lux, true);
+        statusMessage = "Email sent: Mailbox is open.";
+        Serial.println(statusMessage);
+        addToLog(statusMessage);
     }
-    previousDistance = currentDistance;
-    return statusMessage;  // Return the status message
+
+    return statusMessage;  // Return the status for display or debugging
 }
+
 
 
 int Alert::monitorLightSensor(int threshold) {

@@ -7,6 +7,7 @@
 #include "DistanceSensor.h"
 #include "LightSensor.h"
 #include "MailService.h"
+#include "GlobalUtils.h"
 
 #define LED_PIN 21
 
@@ -23,6 +24,9 @@ private:
     const unsigned long emailCooldown = 60 * 1000; // Cooldown time between email alerts (in ms)
     int deliveryStartHour;
     int deliveryEndHour;
+    String currentState = "closed";
+    String previousState = "closed";
+
 
 public:
     Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour);

@@ -7,8 +7,9 @@
 #include "MailService.h"      // Include your custom MailService class
 
 #include <WebServer.h>  // Include the WebServer library
-#include <limits.h>     // For INT_MAX and INT_MIN
-#include <float.h>      // For FLT_MAX and FLT_MIN
+// #include <limits.h>     // For INT_MAX and INT_MIN
+// #include <float.h>      // For FLT_MAX and FLT_MIN
+#include "GlobalUtils.h"
 
 class WebEndpoints {
 public:
@@ -18,8 +19,7 @@ public:
 
 
     // Constructor that takes references to systemLog and logIndex
-    WebEndpoints(WebServer& server, MailService* mailService, 
-                 DistanceSensor& distanceSensor, LightSensor& lightSensor,
+    WebEndpoints(WebServer& server, MailService* mailService,
                  String* systemLog, int& logIndex);
 
 
@@ -38,16 +38,16 @@ private:
     String* systemLog;   // Pointer to system log
     int& logIndex;       // Reference to log index
 
-    DistanceSensor& distanceSensor;
-    LightSensor& lightSensor;
+    // DistanceSensor& distanceSensor;
+    // LightSensor& lightSensor;
     MailService* mailService; // Use a pointer
     float previousDistance;
     unsigned long lastEmailTime;
 
-    // Min/Max tracking variables
-    float minLux = FLT_MAX, maxLux = FLT_MIN;
-    float minTof = FLT_MAX, maxTof = FLT_MIN;
-    int minRSSI = INT_MAX, maxRSSI = INT_MIN;
+    // // Min/Max tracking variables
+    // float minLux = FLT_MAX, maxLux = FLT_MIN;
+    // float minTof = FLT_MAX, maxTof = FLT_MIN;
+    // int minRSSI = INT_MAX, maxRSSI = INT_MIN;
 
 // If you want to avoid adding new #include directives to your project,
 //  you can define the initial extreme values for RSSI, lux, and ToF directly

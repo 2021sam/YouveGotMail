@@ -50,7 +50,7 @@ const int deliveryStartHour = 8;  // 8 AM
 const int deliveryEndHour = 17;   // 5 PM
 
 WebServer server(80); // Web server listening on port 80
-WebEndpoints endpoints(server, &mailService, distanceSensor, lightSensor, systemLog, logIndex);
+WebEndpoints endpoints(server, &mailService, systemLog, logIndex);
 // Pointer for Alert class
 Alert* alert = nullptr;
 
@@ -122,10 +122,11 @@ void scheduledTasks(){
     checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
 
     if (distanceSensor.isOnline()) {
-
-        float currentDistance = distanceSensor.getDistance();
-        float lux = lightSensor.getLightLevel();
         int rssi = WiFi.RSSI();
+        float lux = lightSensor.getLightLevel();
+        float currentDistance = distanceSensor.getDistance();
+
+        updateSensorValues(rssi, lux, currentDistance);
         String currentTime = getCurrentTime();  // Get current time via Alert class
         // Print RSSI, distance, and light level on one line
         Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
@@ -135,14 +136,14 @@ void scheduledTasks(){
 
         String statusMessage = alert->checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
 
-        int threshold = 100;
+        // int threshold = 100;
         // alertSystem.monitorLightSensor(threshold);
 
-        if (statusMessage != "") {
-        display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
-        addToLog(statusMessage);
-        delay(10000);
-        }
+        // if (statusMessage != "") {
+        // display.showStatusMessage(statusMessage);  // Show the new message on the TFT screen
+        // addToLog(statusMessage);
+        // delay(10000);
+        // }
     }
     else {
         bool resurrectTOF = distanceSensor.resetSensor();
