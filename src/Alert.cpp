@@ -24,31 +24,23 @@ void Alert::blinkLED(int delayTime) {
 }
 
 
-String Alert::checkAndSendEmail(int currentDistance, int lux) {
-    String statusMessage = "";  // Status message to return
-
+void Alert::checkAndSendEmail() {
     if (mail_alert)
     {
         mail_alert = false;
-        mailService.sendEmail(previousTof, currentDistance, lux, true);
-        statusMessage = "Email sent: Mailbox is open.";
+
+        // Create the HTML message
+        String currentTime = getCurrentTime();
+        String htmlMsg = "<p>Time: " + currentTime + "</p>" // Include the current time
+                        "<p>Previous distance: " + String(previousTof) + " cm</p>"
+                        "<p>Current distance: " + String(currentTof) + " cm</p>"
+                        "<p>Lux: " + String(currentLux) + "</p>"
+                        "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
+                        "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
+
+        mailService.sendEmail(htmlMsg);
+        String statusMessage = "Email sent: Mailbox is open.";
         Serial.println(statusMessage);
         addToLog(statusMessage);
     }
-
-    return statusMessage;  // Return the status for display or debugging
-}
-
-
-int Alert::monitorLightSensor(int threshold) {
-    // Trigger the light sensor and get the reading
-    // int lux = lightSensor.getLightLevel();
-
-    // Check the light level against the threshold
-    // if (lux >= threshold) {
-    //         Serial.println("Light level exceeds threshold. Mail detected!");
-    //         // float currentDistance = distanceSensor.getDistance();
-    //         mailService.sendEmail(previousDistance, currentDistance, lux, true);
-    // }
-    return 0;
 }

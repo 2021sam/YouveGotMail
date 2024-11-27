@@ -7,8 +7,9 @@ class MailService {
 public:
     MailService(const char* senderEmail, const char* senderPassword, const char* smtpHost, int smtpPort, 
                 const char* recipients[], int numRecipients);
-    String getCurrentTime();
-    void sendEmail(float previousDistance, float distance, float lux, bool inDeliveryWindow);
+
+    void sendEmail(const String& htmlMsg);
+
 
 private:
     const char* senderEmail;

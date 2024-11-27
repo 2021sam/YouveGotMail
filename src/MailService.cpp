@@ -17,26 +17,7 @@ MailService::MailService(const char* senderEmail, const char* senderPassword, co
 }
 
 
-// Function to return the current time as a string
-String MailService::getCurrentTime() {
-    // Get the current time from the system clock
-    time_t now = time(nullptr);
-    struct tm* timeinfo = localtime(&now);
-
-    // Format the time into a readable string
-    char buffer[30];  // Buffer size of 30 is enough for formatted time string
-    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-
-    // Return the formatted time as a String
-    return String(buffer);
-}
-
-
-
-void MailService::sendEmail(float previousDistance, float distance, float lux, bool inDeliveryWindow) {
-    // Set up the email message
-    String currentTime = getCurrentTime();
-
+void MailService::sendEmail(const String& htmlMsg) {
     SMTP_Message message;
     message.sender.name = F("ESP Mail");
     message.sender.email = senderEmail;
@@ -46,13 +27,6 @@ void MailService::sendEmail(float previousDistance, float distance, float lux, b
         message.addRecipient(F("Recipient"), recipients[i]);
     }
 
-    // Create the HTML message
-    String htmlMsg = "<p>Time: " + currentTime + "</p>" // Include the current time
-                     "<p>Previous distance: " + String(previousDistance) + " cm</p>"
-                     "<p>Current distance: " + String(distance) + " cm</p>"
-                     "<p>Lux: " + String(lux) + "</p>"
-                     "<p>RSSI: " + String(WiFi.RSSI()) + " dBm</p>"
-                     "<p>Delivery Window Status: " + String(inDeliveryWindow ? "High" : "Low") + " Alert.</p>";
     message.html.content = htmlMsg;
     message.html.charSet = F("utf-8");
     // Connect to SMTP server

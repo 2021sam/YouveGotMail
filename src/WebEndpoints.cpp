@@ -99,11 +99,15 @@ void WebEndpoints::handleRSSI() {
 // Handle the email alert endpoint
 void WebEndpoints::handleEmailAlert() {
 
-    float currentDistance = currentTof;
-    float lightLevel = currentLux;
-    previousDistance = previousTof;
+        // Create the HTML message
+        String htmlMsg = "<p>Time: " + getCurrentTime() + "</p>" // Include the current time
+                        "<p>Previous distance: " + String(previousTof) + " cm</p>"
+                        "<p>Current distance: " + String(currentTof) + " cm</p>"
+                        "<p>Lux: " + String(currentLux) + "</p>"
+                        "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
+                        "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
 
-    mailService->sendEmail(previousDistance, currentDistance, lightLevel, isWithinDeliveryWindow());
+    mailService->sendEmail(htmlMsg);
     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
 }
 

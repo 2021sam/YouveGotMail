@@ -15,7 +15,7 @@
 class Alert {
 private:
     MailService& mailService;        // Reference to the mail service
-    float previousDistance = 0;      // Previous distance measurement
+    // float previousDistance = 0;      // Previous distance measurement
     // unsigned long lastEmailTime = 0; // Timestamp of the last email sent
     unsigned long startDelayTime = 0; // Timestamp of the last email sent
     const int distanceThresholdCM = 10;  // Minimum distance change for alert (in cm)
@@ -30,15 +30,13 @@ public:
     Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour);
 
     // Method to check the conditions and send an email if necessary
-    String checkAndSendEmail(int currentDistance, int lux);
+    void checkAndSendEmail();
 
     // Method to check if the current time is within the delivery window (8 AM to 5 PM)
     bool isWithinDeliveryWindow();
 
     // Method to blink an LED for a confirmation (e.g., during confirmation phase)
     void blinkLED(int delayTime);
-
-    int monitorLightSensor(int threshold);
 };
 
 #endif  // ALERT_H

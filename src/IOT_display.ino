@@ -133,7 +133,7 @@ void scheduledTasks(){
         // Display all data on the TFT screen
         display.showAllData(currentDistance, lux, rssi, currentTime);
 
-        String statusMessage = alert->checkAndSendEmail(currentDistance, lux);  // Check alert conditions and send email if necessary
+        alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
     }
     else {
         updateSensorValues(rssi, -1, -1);
