@@ -7,12 +7,6 @@ Alert::Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHou
       }
 
 
-void Alert::setPreviousDistance(float distance) {
-    previousDistance = distance;
-    Serial.printf("Previous distance manually set to: %.2f cm\n", previousDistance);
-}
-
-
 // Check if the current time is within the delivery window (8 AM to 5 PM)
 bool Alert::isWithinDeliveryWindow() {
     time_t now = time(nullptr);
@@ -44,7 +38,6 @@ String Alert::checkAndSendEmail(int currentDistance, int lux) {
 
     return statusMessage;  // Return the status for display or debugging
 }
-
 
 
 int Alert::monitorLightSensor(int threshold) {

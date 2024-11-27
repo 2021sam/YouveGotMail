@@ -3,14 +3,6 @@
 #include "WebEndpoints.h"  // Include the header file for WebEndpoints
 #include "index_html.h" // Include the HTML content
 
-// WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
-//                            DistanceSensor& distanceSensor, LightSensor& lightSensor)
-//     : server(server), mailService(mailService), 
-//       distanceSensor(distanceSensor), lightSensor(lightSensor) {
-
-
-
-
 WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
                            String* systemLog, int& logIndex) : server(server), mailService(mailService),
       systemLog(systemLog), logIndex(logIndex) {
@@ -25,7 +17,6 @@ WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService,
     server.on("/all", HTTP_GET, [this]() { handleSensorData(); });
     server.on("/log", HTTP_GET, [this]() { handleLog(); });
     }
-
 
 
     // Handle the root page
@@ -58,7 +49,6 @@ void WebEndpoints::handleDeviceInfo() {
 }
 
 
-
 // Handle the distance endpoint
 void WebEndpoints::handleDistance() {
     String response = "Distance: " + String(currentTof) + " cm";
@@ -78,10 +68,7 @@ void WebEndpoints::handleSensorData() {
     response += "<h1>Sensor Data</h1>";
     response += "<table>";
     response += "<tr><th>Parameter</th><th>Current</th><th>Min</th><th>Max</th></tr>";
-    // response += "<tr><td>RSSI (dBm)</td><td>" + String(rssi) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
-    // response += "<tr><td>Light Level (Lux)</td><td>" + String(lux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
-    // response += "<tr><td>Distance (ToF cm)</td><td>" + String(tof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
-        response += "<tr><td>RSSI (dBm)</td><td>" + String(currentRSSI) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
+    response += "<tr><td>RSSI (dBm)</td><td>" + String(currentRSSI) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
     response += "<tr><td>Light Level (Lux)</td><td>" + String(currentLux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
     response += "<tr><td>Distance (ToF cm)</td><td>" + String(currentTof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
     response += "</table>";
@@ -94,7 +81,6 @@ void WebEndpoints::handleSensorData() {
     // Send the response as HTML
     server.send(200, "text/html", response);
 }
-
 
 
 // Handle the light level endpoint
@@ -127,7 +113,6 @@ bool WebEndpoints::isWithinDeliveryWindow() {
     int currentHour = timeinfo->tm_hour;
     return (currentHour >= 8 && currentHour < 17);  // Delivery window is between 8 AM and 5 PM
 }
-
 
 
 void WebEndpoints::handleLog() {

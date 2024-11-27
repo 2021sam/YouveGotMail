@@ -85,11 +85,10 @@ void setup() {
     server.begin();
     Serial.println("WebServer started");
 
-    float initialDistance = distanceSensor.getDistance();
+    previousTof = distanceSensor.getDistance();
     alert = new Alert(mailService, deliveryStartHour, deliveryEndHour);
-    alert->setPreviousDistance(initialDistance);  // Set the initial distance in Alert
     addToLog("Device IP Address: " + ipAddress);
-    addToLog("Initial Distance: " + String(initialDistance));
+    addToLog("Initial Distance: " + String(previousTof));
 
     // Initialize light sensor
     lightSensor.begin();
