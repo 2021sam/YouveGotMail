@@ -14,8 +14,6 @@
 // Alert class to handle distance checks and email notifications
 class Alert {
 private:
-    // DistanceSensor& distanceSensor;  // Reference to the distance sensor
-    // LightSensor& lightSensor;        // Reference to the light sensor
     MailService& mailService;        // Reference to the mail service
     float previousDistance = 0;      // Previous distance measurement
     // unsigned long lastEmailTime = 0; // Timestamp of the last email sent
@@ -30,12 +28,6 @@ private:
 
 public:
     Alert(MailService& mailService, int deliveryStartHour, int deliveryEndHour);
-
-    void setPreviousDistance(float distance);
-
-
-    // Method to get the current time as a string (to be printed in IOT.ino)
-    // String getCurrentTime();
 
     // Method to check the conditions and send an email if necessary
     String checkAndSendEmail(int currentDistance, int lux);

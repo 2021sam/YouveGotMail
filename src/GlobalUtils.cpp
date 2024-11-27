@@ -64,6 +64,7 @@ void updateSensorValues(int rssi, float lux, float tof) {
             isMailboxOpen = true;
             mail_alert = true;
             addToLog("Mailbox state changed to: Open");
+            addToLog("Max ToF in Closed State: " + String(maxTof_inClosedState) + " cm");
         }
 
     }

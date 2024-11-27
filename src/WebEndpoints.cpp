@@ -71,6 +71,7 @@ void WebEndpoints::handleSensorData() {
     response += "<tr><td>RSSI (dBm)</td><td>" + String(currentRSSI) + "</td><td>" + String(minRSSI) + "</td><td>" + String(maxRSSI) + "</td></tr>";
     response += "<tr><td>Light Level (Lux)</td><td>" + String(currentLux) + "</td><td>" + String(minLux) + "</td><td>" + String(maxLux) + "</td></tr>";
     response += "<tr><td>Distance (ToF cm)</td><td>" + String(currentTof) + "</td><td>" + String(minTof) + "</td><td>" + String(maxTof) + "</td></tr>";
+    response += "<tr><td>Max ToF in Closed State (cm)</td><td>" + String(maxTof_inClosedState) + "</td><td>N/A</td><td>N/A</td></tr>";
     response += "</table>";
     
     // JavaScript to auto-refresh the page every second (1000 milliseconds)
