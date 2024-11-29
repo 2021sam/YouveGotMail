@@ -2,7 +2,7 @@
 #include <Wire.h>
 
 unsigned long lastPowerOffTime = 0; // To track time when the power was last turned off
-unsigned long resetInterval = 10 * 1000; // 60 seconds
+unsigned long resetInterval = 60 * 1000; // 60 seconds
 
 
 // Constructor with additional parameters for SDA, SCL, and clock speed
@@ -10,6 +10,7 @@ DistanceSensor::DistanceSensor(uint8_t address, uint8_t sda, uint8_t scl, uint32
     : onlineStatus(false), i2cAddress(address), sdaPin(sda), sclPin(scl), i2cClockSpeed(clockSpeed) {
     // Optionally initialize any member variables if needed
 }
+
 
 // Initialize the VL53L1X distance sensor and check if it is online
 bool DistanceSensor::begin() {
@@ -28,6 +29,7 @@ bool DistanceSensor::begin() {
     bool initStatus = distanceSensor.begin();  // Get the return value of begin()
     Serial.print("distanceSensor.begin() = ");
     Serial.println(initStatus);
+    
     // Attempt to initialize the sensor and set the I2C address
     if (!initStatus) {
         distanceSensor.setI2CAddress(i2cAddress);  // Set the I²C address
@@ -40,15 +42,12 @@ bool DistanceSensor::begin() {
 }
 
 
-
 bool DistanceSensor::resetSensor() {
     Serial.println("Attempting to reset the sensor...");
     
     // Try to reinitialize the sensor after waiting for 60 seconds
     lastPowerOffTime = millis(); // Reset the timer
     while (millis() - lastPowerOffTime < resetInterval) {
-        // Wait for 60 seconds before resetting
-        // delay(1000);  // Check every second if needed, or handle other tasks during this period
         yield();
     }
 
@@ -73,7 +72,6 @@ bool DistanceSensor::setAddress(uint8_t newAddress) {
     }
     return false;  // Return false if the address is out of range
 }
-
 
 
 // Check if the sensor is online (initialized and working)
@@ -101,7 +99,6 @@ float DistanceSensor::getDistance() {
 }
 
 // Expose the necessary methods from SFEVL53L1X
-
 // Start ranging operation
 void DistanceSensor::startRanging() {
     if (onlineStatus) {

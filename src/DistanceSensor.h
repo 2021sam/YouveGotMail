@@ -5,9 +5,6 @@
 
 class DistanceSensor {
 public:
-    // DistanceSensor();  // Constructor
-    // DistanceSensor(uint8_t address = 0x29);  // Default to the standard address
-
     // Constructor with additional parameters for SDA, SCL, and clock speed
     DistanceSensor(uint8_t address = 0x29, uint8_t sda = 18, uint8_t scl = 17, uint32_t clockSpeed = 50000);
 
