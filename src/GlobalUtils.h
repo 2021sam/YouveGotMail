@@ -23,7 +23,7 @@ extern float minTof, maxTof, maxTof_inClosedState;
 extern int minRSSI, maxRSSI;
 // Global constant for time formatting buffer size
 const int TIME_BUFFER_SIZE = 30;
-extern String systemLog[10];  // Array to hold the log entries
+extern String systemLog[20];  // Array to hold the log entries
 extern int logIndex;  // Index to track where to add the new log entry
 
 // Function prototypes
