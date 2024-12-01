@@ -2,14 +2,82 @@
 #define WIFI_MANAGER_H
 
 #include <WiFi.h>
+#include <Preferences.h>  // Include Preferences to store Wi-Fi credentials
+#include <WiFiManager.h>  // Include WiFiManager to handle AP mode
 #include "TFTDisplay.h"  // Include the TFTDisplay header to use it
+
+Preferences preferences;  // Create an instance of the Preferences class
+
+
+// Function to load Wi-Fi credentials from Preferences
+void loadWiFiCredentials(String &ssid, String &password) {
+    preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
+    ssid = preferences.getString("ssid", "");  // Read SSID, or use default if not set
+    password = preferences.getString("password", "");  // Read password, or use default
+    preferences.end();  // Close Preferences
+}
+
+// Function to save Wi-Fi credentials to Preferences
+void saveWiFiCredentials(const String &ssid, const String &password) {
+    preferences.begin("wifi", false);  // Open "wifi" namespace for writing credentials
+    preferences.putString("ssid", ssid);  // Save SSID
+    preferences.putString("password", password);  // Save password
+    preferences.end();  // Close Preferences
+}
+
 
 
 // Function to set up Wi-Fi connection
-String setup_WiFi(TFTDisplay& display) {
-    Serial.println();
-    Serial.print("Connecting to Wi-Fi: ");
+String setup_WiFi(TFTDisplay& display)
+{
+    Serial.println("Load Credentials from EEPROM Preferences");
+    String WIFI_SSID, WIFI_PASSWORD;
+    loadWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);  // Load saved Wi-Fi credentials
     Serial.println(WIFI_SSID);
+    Serial.println(WIFI_PASSWORD);
+
+    if (WIFI_SSID.isEmpty()) {
+        // Serial.println("No saved Wi-Fi credentials. Restarting in AP mode...");
+        // ESP.restart(); // Restart to force AP mode
+
+        Serial.println("No saved Wi-Fi credentials. Entering AP mode...");
+        display.showStatusMessage("Wi-Fi AP Mode Active.");
+        WiFiManager wifiManager;
+        // wifiManager.setAPCallback([](WiFiManager *myWiFiManager) {
+        //     Serial.println("Entered AP Mode");
+        //     // Show on TFT that AP mode is active
+        //     // display.showStatusMessage("Wi-Fi AP Mode Active.");
+        // });
+
+        // if (!wifiManager.autoConnect("ESP32_Config")) {
+        //     Serial.println("Failed to connect and hit timeout");
+        //     return "";
+        // }
+
+        // Start AP mode with WiFiManager
+        if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
+        Serial.println("Failed to connect or configure WiFi.");
+        delay(3000);
+        ESP.restart(); // Restart to try again
+        }
+
+        saveWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);
+        Serial.println("Updated new WiFi Credentials.");
+
+    Serial.println("WiFi configured successfully. Restarting...");
+    delay(1000);
+    // ESP.restart();
+
+    }
+    
+    
+    //  {
+        Serial.println();
+        Serial.println("Connecting to Wi-Fi: ");
+        Serial.println(WIFI_SSID);
+        Serial.println(WIFI_PASSWORD);
+        // WiFi.begin(WIFI_SSID.c_str(), WIFI_PASSWORD.c_str());
+    // }
 
     int blinkDelay = 500;  // Delay in milliseconds for blinking effect (flashing text)
     int lastBlinkTime = 0;  // Track time for blinking
@@ -50,10 +118,10 @@ String setup_WiFi(TFTDisplay& display) {
 
     delay(1000);
     // Set the device's hostname after successful Wi-Fi connection
-    WiFi.setHostname(WIFI_HOSTNAME);  // Set the hostname for the device
-    Serial.print("Wi-Fi Hostname: ");
-    Serial.println(WIFI_HOSTNAME);
-    display.showStatusMessage("Wi-Fi Hostname: " + String(WIFI_HOSTNAME) );
+    // WiFi.setHostname(WIFI_HOSTNAME);  // Set the hostname for the device
+    // Serial.print("Wi-Fi Hostname: ");
+    // Serial.println(WIFI_HOSTNAME);
+    // display.showStatusMessage("Wi-Fi Hostname: " + String(WIFI_HOSTNAME) );
 
     return ipAddress;  // Return the IP address
 }

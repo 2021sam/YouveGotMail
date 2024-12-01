@@ -21,7 +21,7 @@
 #include "index_html.h"  // Include the HTML header file
 #include "Alert.h"
 #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
-// #include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
+#include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
 #include "GlobalUtils.h"
 #include <WiFiManager.h> // Include WiFiManager
 #include "ButtonHandler.h" // Include the new header file for button handling
@@ -66,25 +66,24 @@ void setup() {
 
 
     // Call the setup function for WiFiManager and button
-    setupWiFiAndButton();
+    // setupWiFiAndButton();
   // Ensure the device is connected to Wi-Fi before proceeding
-    while (WiFi.status() != WL_CONNECTED) {
-        display.showStatusMessage("Connecting to Wi-Fi...");
-        delay(500);  // Wait for a short period before checking again
-    }
+    // while (WiFi.status() != WL_CONNECTED) {
+    //     display.showStatusMessage("Connecting to Wi-Fi...");
+    //     delay(500);  // Wait for a short period before checking again
+    // }
 
 
 
-
-    // Display the connected SSID and IP address
-    String ssidMessage = "Connected SSID: " + WiFi.SSID();
-    display.showStatusMessage(ssidMessage);  // Show SSID on the display
-    Serial.println(ssidMessage);  // Also log to the serial monitor
-    delay(2000);
-    String ipAddress = "IP Address: " + WiFi.localIP().toString();
-    display.showStatusMessage(ipAddress);  // Show IP address on the display
-    Serial.println(ipAddress);  // Also log the IP address
-    delay(2000);  // Allow time for the user to see the messages
+    // // Display the connected SSID and IP address
+    // String ssidMessage = "Connected SSID: " + WiFi.SSID();
+    // display.showStatusMessage(ssidMessage);  // Show SSID on the display
+    // Serial.println(ssidMessage);  // Also log to the serial monitor
+    // delay(2000);
+    // String ipAddress = "IP Address: " + WiFi.localIP().toString();
+    // display.showStatusMessage(ipAddress);  // Show IP address on the display
+    // Serial.println(ipAddress);  // Also log the IP address
+    // delay(2000);  // Allow time for the user to see the messages
 
 
 
@@ -100,9 +99,9 @@ void setup() {
 
 
     // Setup Wi-Fi connection
-    // String ipAddress = setup_WiFi(display);
-    // display.showStatusMessage(ipAddress);
-    // delay(2000);
+    String ipAddress = setup_WiFi(display);
+    display.showStatusMessage(ipAddress);
+    delay(2000);
 
     // Initialize sensors
     Wire.begin();
