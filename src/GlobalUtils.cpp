@@ -12,7 +12,7 @@ float minLux = 1e6, maxLux = -1e6;
 float minTof = 1e6, maxTof = -1e6, maxTof_inClosedState = -1e6;
 int minRSSI = 32767, maxRSSI = -32768;
 
-String systemLog[10];  // Array to hold the log entries
+String systemLog[20];  // Array to hold the log entries
 int logIndex = 0;      // Index to track where to add the new log entry
 
 

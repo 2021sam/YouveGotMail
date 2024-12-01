@@ -21,9 +21,10 @@
 #include "index_html.h"  // Include the HTML header file
 #include "Alert.h"
 #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
-#include "WiFiManager.h"  // Include the new WiFiManager header  -- After credentials.h are included.
+// #include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
 #include "GlobalUtils.h"
-
+#include <WiFiManager.h> // Include WiFiManager
+#include "ButtonHandler.h" // Include the new header file for button handling
 
 #define LED_PIN 21
 TFTDisplay display;  // Create a TFTDisplay object
@@ -63,13 +64,45 @@ void setup() {
     display.begin();  // Initialize TFT display
     display.showStatusMessage("Initializing...");  // Show a message on TFT to indicate startup
 
+
+    // Call the setup function for WiFiManager and button
+    setupWiFiAndButton();
+  // Ensure the device is connected to Wi-Fi before proceeding
+    while (WiFi.status() != WL_CONNECTED) {
+        display.showStatusMessage("Connecting to Wi-Fi...");
+        delay(500);  // Wait for a short period before checking again
+    }
+
+
+
+
+    // Display the connected SSID and IP address
+    String ssidMessage = "Connected SSID: " + WiFi.SSID();
+    display.showStatusMessage(ssidMessage);  // Show SSID on the display
+    Serial.println(ssidMessage);  // Also log to the serial monitor
+    delay(2000);
+    String ipAddress = "IP Address: " + WiFi.localIP().toString();
+    display.showStatusMessage(ipAddress);  // Show IP address on the display
+    Serial.println(ipAddress);  // Also log the IP address
+    delay(2000);  // Allow time for the user to see the messages
+
+
+
+
+
+
+
+
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
+
+
+
     // Setup Wi-Fi connection
-    String ipAddress = setup_WiFi(display);
-    display.showStatusMessage(ipAddress);
-    delay(2000);
+    // String ipAddress = setup_WiFi(display);
+    // display.showStatusMessage(ipAddress);
+    // delay(2000);
 
     // Initialize sensors
     Wire.begin();
@@ -87,7 +120,7 @@ void setup() {
 
     previousTof = distanceSensor.getDistance();
     alert = new Alert(mailService, deliveryStartHour, deliveryEndHour);
-    addToLog("Device IP Address: " + ipAddress);
+    // addToLog("Device IP Address: " + ipAddress);
     addToLog("Initial Distance: " + String(previousTof));
 
     // Initialize light sensor
@@ -118,7 +151,7 @@ void loop() {
 }
 
 void scheduledTasks(){
-    checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
+    // checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
     int rssi = WiFi.RSSI();
 
     if (distanceSensor.isOnline()) {
@@ -136,11 +169,11 @@ void scheduledTasks(){
         alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
     }
     else {
-        updateSensorValues(rssi, -1, -1);
-        bool resurrectTOF = distanceSensor.resetSensor();
-        Serial.print("Resurrected TOF: ");
-        Serial.println(resurrectTOF);
-        if (resurrectTOF)
-            addToLog("Distance sensor is resurrected & back online.");
+            updateSensorValues(rssi, -1, -1);
+            bool resurrectTOF = distanceSensor.resetSensor();
+            Serial.print("Resurrected TOF: ");
+            Serial.println(resurrectTOF);
+            if (resurrectTOF)
+                addToLog("Distance sensor is resurrected & back online.");
     }
 }

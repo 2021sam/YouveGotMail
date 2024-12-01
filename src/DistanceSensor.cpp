@@ -43,23 +43,35 @@ bool DistanceSensor::begin() {
 
 
 bool DistanceSensor::resetSensor() {
-    Serial.println("Attempting to reset the sensor...");
-    
-    // Try to reinitialize the sensor after waiting for 60 seconds
-    lastPowerOffTime = millis(); // Reset the timer
-    while (millis() - lastPowerOffTime < resetInterval) {
-        yield();
-    }
+    // Serial.println("Attempting to reset the sensor...");
 
-    // After waiting, attempt to reinitialize the sensor
-    if (!begin()) {
-        Serial.println("Failed to reinitialize the sensor.");
-        return false;
+    // Save the current time for the reset interval
+    unsigned long currentMillis = millis();
+    if (currentMillis - lastPowerOffTime >= resetInterval) {
+        lastPowerOffTime = currentMillis; // Update the last reset time
+
+        // Try to reinitialize the sensor after a brief reset attempt
+        bool resetSuccess = begin();  // Attempt to reinitialize the sensor
+        if (resetSuccess) {
+            Serial.println("Sensor reset successfully.");
+            return true;
+        } else {
+            Serial.println("Failed to reinitialize the sensor.");
+            return false;
+        }
     } else {
-        Serial.println("Sensor reset successfully.");
-        return true;
+        // Serial.println("Reset attempt too soon. Waiting for next attempt.");
+        return false;  // Wait until the reset interval has passed
     }
 }
+
+
+
+
+
+
+
+
 
 
 // Set a new I²C address
