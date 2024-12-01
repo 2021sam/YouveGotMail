@@ -54,6 +54,15 @@ String setup_WiFi(TFTDisplay& display)
         //     return "";
         // }
 
+
+      // Use the callback function to store the credentials
+        wifiManager.setSaveConfigCallback([]() {
+            String savedSSID = WiFi.SSID();  // Save the new SSID
+            String savedPassword = WiFi.psk();  // Save the new password
+            saveWiFiCredentials(savedSSID, savedPassword);  // Save credentials to Preferences
+            Serial.println("Updated new WiFi Credentials.");
+        });
+
         // Start AP mode with WiFiManager
         if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
         Serial.println("Failed to connect or configure WiFi.");
@@ -61,23 +70,14 @@ String setup_WiFi(TFTDisplay& display)
         ESP.restart(); // Restart to try again
         }
 
-        saveWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);
-        Serial.println("Updated new WiFi Credentials.");
-
-    Serial.println("WiFi configured successfully. Restarting...");
-    delay(1000);
-    // ESP.restart();
-
     }
     
     
-    //  {
         Serial.println();
         Serial.println("Connecting to Wi-Fi: ");
         Serial.println(WIFI_SSID);
         Serial.println(WIFI_PASSWORD);
-        // WiFi.begin(WIFI_SSID.c_str(), WIFI_PASSWORD.c_str());
-    // }
+        display.showStatusMessage("Connecting to NEW Wi-Fi: " + String(WIFI_SSID) + " PASSWORD: " + String(WIFI_PASSWORD));
 
     int blinkDelay = 500;  // Delay in milliseconds for blinking effect (flashing text)
     int lastBlinkTime = 0;  // Track time for blinking
