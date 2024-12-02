@@ -12,6 +12,8 @@ void buttonTask(void *parameter);
 void handleButtonPress();
 void setupWiFiAndButton();
 
-extern WiFiManager wm;
+extern void startAPMode(); // Declare external function for WiFi reset logic
+
+// extern WiFiManager wm;
 
 #endif
