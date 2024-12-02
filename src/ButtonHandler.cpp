@@ -51,10 +51,10 @@ void buttonTask(void *parameter) {
             // Serial.println("Rebooting ESP...");
             // ESP.restart();
 
-    // Serial.println("startAP Mode");         // repeats
+    Serial.println("startAP Mode");         // repeats
     // startAPMode();
                 // Serial.println("Button held for 3 seconds! Resetting WiFi settings...");
-            // startAPMode();  // Only call this once when button is held for 3 seconds
+            startAPMode();  // Only call this once when button is held for 3 seconds
 
 
 

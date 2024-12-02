@@ -34,23 +34,23 @@ void startAPMode() {
 
     WiFiManager wifiManager;
 
-    // Set the callback to save credentials once they are entered
-    wifiManager.setSaveConfigCallback([]() {
-        String savedSSID = WiFi.SSID();
-        String savedPassword = WiFi.psk();
-        saveWiFiCredentials(savedSSID, savedPassword);
-        Serial.println("Updated new WiFi Credentials.");
-    });
+    // // Set the callback to save credentials once they are entered
+    // wifiManager.setSaveConfigCallback([]() {
+    //     String savedSSID = WiFi.SSID();
+    //     String savedPassword = WiFi.psk();
+    //     saveWiFiCredentials(savedSSID, savedPassword);
+    //     Serial.println("Updated new WiFi Credentials.");
+    // });
 
-    // Start the configuration portal
-    if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
-        Serial.println("Failed to connect or configure Wi-Fi.");
-        delay(3000);
-        ESP.restart(); // Restart if configuration fails
-    }
+    // // Start the configuration portal
+    // if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
+    //     Serial.println("Failed to connect or configure Wi-Fi.");
+    //     delay(3000);
+    //     ESP.restart(); // Restart if configuration fails
+    // }
 
-    // After the user configures the Wi-Fi, you can proceed with your normal setup
-    Serial.println("WiFi configured successfully.");
+    // // After the user configures the Wi-Fi, you can proceed with your normal setup
+    // Serial.println("WiFi configured successfully.");
 }
 
 
