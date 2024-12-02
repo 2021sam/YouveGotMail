@@ -9,6 +9,16 @@
 Preferences preferences;  // Create an instance of the Preferences class
 
 
+
+void deleteWiFiCredentials() {
+    preferences.begin("wifi", false);
+    preferences.remove("ssid");
+    preferences.remove("password");
+    preferences.end();
+    Serial.println("Wi-Fi credentials erased.");
+}
+
+
 // Function to load Wi-Fi credentials from Preferences
 void loadWiFiCredentials(String &ssid, String &password) {
     preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
@@ -26,31 +36,29 @@ void saveWiFiCredentials(const String &ssid, const String &password) {
 }
 
 
-
 // Function to start AP mode and let the user configure Wi-Fi credentials
 void startAPMode() {
     Serial.println("Entering AP mode...");
-    // display.showStatusMessage("Wi-Fi AP Mode Active.");
 
     WiFiManager wifiManager;
 
-    // // Set the callback to save credentials once they are entered
-    // wifiManager.setSaveConfigCallback([]() {
-    //     String savedSSID = WiFi.SSID();
-    //     String savedPassword = WiFi.psk();
-    //     saveWiFiCredentials(savedSSID, savedPassword);
-    //     Serial.println("Updated new WiFi Credentials.");
-    // });
+    // Set the callback to save credentials once they are entered
+    wifiManager.setSaveConfigCallback([]() {
+        String savedSSID = WiFi.SSID();
+        String savedPassword = WiFi.psk();
+        saveWiFiCredentials(savedSSID, savedPassword);
+        Serial.println("Updated new WiFi Credentials.");
+    });
 
-    // // Start the configuration portal
-    // if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
-    //     Serial.println("Failed to connect or configure Wi-Fi.");
-    //     delay(3000);
-    //     ESP.restart(); // Restart if configuration fails
-    // }
+    // Start the configuration portal
+    if (!wifiManager.startConfigPortal("ESP_AP_Config")) {
+        Serial.println("Failed to connect or configure Wi-Fi.");
+        delay(3000);
+        ESP.restart(); // Restart if configuration fails
+    }
 
-    // // After the user configures the Wi-Fi, you can proceed with your normal setup
-    // Serial.println("WiFi configured successfully.");
+    // After the user configures the Wi-Fi, you can proceed with your normal setup
+    Serial.println("WiFi configured successfully.");
 }
 
 
@@ -64,6 +72,8 @@ String setup_WiFi(TFTDisplay& display)
     Serial.println(WIFI_PASSWORD);
 
     if (WIFI_SSID.isEmpty()) {
+        display.showStatusMessage("Web Portal AP started: ESP_AP_Config, AP IP address: 192.168.4.1");
+        delay(2000);
         startAPMode();
     }
 

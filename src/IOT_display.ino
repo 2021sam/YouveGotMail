@@ -55,6 +55,8 @@ WebEndpoints endpoints(server, &mailService, systemLog, logIndex);
 // Pointer for Alert class
 Alert* alert = nullptr;
 
+// volatile bool triggerAPMode = false;  // Flag to trigger AP mode
+extern volatile bool triggerAPMode;
 
 void setup() {
     Serial.begin(115200);
@@ -115,6 +117,19 @@ void setup() {
 void loop() {
     // Handle incoming HTTP requests
     server.handleClient();
+
+
+    
+    if (triggerAPMode) {
+        triggerAPMode = false;  // Reset the flag after calling startAPMode
+        // Serial.println(triggerAPMode);
+        // Serial.println("Triggering AP mode...");
+        // delay(3000);
+        // Serial.println("********************* Now...");
+        // startAPMode();  // Call the AP mode function
+        deleteWiFiCredentials();
+    }
+
 
     unsigned long currentMillis = millis();  // Get current time
     if (currentMillis - lastMeasurementTime > 1000) {

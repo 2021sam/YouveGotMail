@@ -7,6 +7,9 @@ volatile bool buttonPressed = false;    // Flag for button press
 volatile unsigned long pressStartTime = 0; // Time when the button was first pressed
 volatile bool isButtonHeld = false;     // Tracks if the button is being held
 
+volatile bool triggerAPMode = false;  // Flag to trigger AP mode
+
+
 // Interrupt Service Routine (ISR) for the button
 void IRAM_ATTR handleButtonPress() {
     // Serial.println("a");        // works
@@ -22,6 +25,7 @@ void IRAM_ATTR handleButtonPress() {
         buttonPressed = false; // Reset the pressed flag on release
         Serial.println("z");
         // startAPMode();
+                     triggerAPMode = true;  // Set flag to trigger AP mode
     }
 }
 
@@ -36,6 +40,8 @@ void buttonTask(void *parameter) {
             if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
                 buttonPressed = true; // Valid 3-second press detected
                 // Serial.println("Cool"); // Works repeats
+
+                            //  triggerAPMode = true;  // Set flag to trigger AP mode
             }
         }
 
@@ -51,10 +57,10 @@ void buttonTask(void *parameter) {
             // Serial.println("Rebooting ESP...");
             // ESP.restart();
 
-    Serial.println("startAP Mode");         // repeats
+    // Serial.println("startAP Mode");         // repeats
     // startAPMode();
                 // Serial.println("Button held for 3 seconds! Resetting WiFi settings...");
-            startAPMode();  // Only call this once when button is held for 3 seconds
+            // startAPMode();  // Only call this once when button is held for 3 seconds
 
 
 
@@ -75,7 +81,7 @@ void setupWiFiAndButton() {
     xTaskCreate(
         buttonTask,        // Task function
         "Button Task",     // Task name
-        2048,              // Stack size (bytes)
+        4096,              // Stack size (bytes)
         NULL,              // Parameter to pass
         1,                 // Task priority
         NULL               // Task handle
