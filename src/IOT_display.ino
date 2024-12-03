@@ -127,22 +127,14 @@ void setup() {
 void loop() {
     // Handle incoming HTTP requests
     server.handleClient();
-
-
     
     if (triggerAPMode) {
         triggerAPMode = false;  // Reset the flag after calling startAPMode
-        // Serial.println(triggerAPMode);
-        // Serial.println("Triggering AP mode...");
-        // delay(3000);
-        // Serial.println("********************* Now...");
-        // startAPMode();  // Call the AP mode function
         deleteWiFiCredentials();
         display.showStatusMessage("Credentials Erased... Restarting...");
         delay(2000);
         ESP.restart();
     }
-
 
     unsigned long currentMillis = millis();  // Get current time
     if (currentMillis - lastMeasurementTime > 1000) {
@@ -154,27 +146,27 @@ void loop() {
 void scheduledTasks(){
     // checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
     int rssi = WiFi.RSSI();
+    float lux, currentDistance;
+    String currentTime = getCurrentTime();  // Get current time via Alert class
 
     if (distanceSensor.isOnline()) {
-        float lux = lightSensor.getLightLevel();
-        float currentDistance = distanceSensor.getDistance();
-
+        lux = lightSensor.getLightLevel();
+        currentDistance = distanceSensor.getDistance();
         updateSensorValues(rssi, lux, currentDistance);
-        String currentTime = getCurrentTime();  // Get current time via Alert class
+        // String currentTime = getCurrentTime();  // Get current time via Alert class
         // Print RSSI, distance, and light level on one line
-        Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
-
         // Display all data on the TFT screen
-        display.showAllData(currentDistance, lux, rssi, currentTime);
-
+        // display.showAllData(currentDistance, lux, rssi, currentTime);
         alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
     }
     else {
+            lux = -1;
+            currentDistance = -1;
             updateSensorValues(rssi, -1, -1);
             bool resurrectTOF = distanceSensor.resetSensor();
-            // Serial.print("Resurrected TOF: ");
-            // Serial.println(resurrectTOF);
             if (resurrectTOF)
                 addToLog("Distance sensor is resurrected & back online.");
     }
+    display.showAllData(currentDistance, lux, rssi, currentTime);
+    Serial.printf("[%s] RSSI: %d, Distance: %.2f cm, Light Level: %.2f lux\n", currentTime.c_str(), rssi, currentDistance, lux);
 }
