@@ -16,6 +16,9 @@ WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService,
     server.on("/alert", HTTP_GET, [this]() { handleEmailAlert(); });
     server.on("/all", HTTP_GET, [this]() { handleSensorData(); });
     server.on("/log", HTTP_GET, [this]() { handleLog(); });
+        // Add the /config route for configuration
+    server.on("/config", HTTP_GET, [this]() { showConfigForm(); });
+    server.on("/config", HTTP_POST, [this]() { handleConfig(); });
     }
 
 
@@ -144,4 +147,70 @@ void WebEndpoints::handleLog() {
 
     // Send the response as HTML
     server.send(200, "text/html", response);
+}
+
+
+
+void WebEndpoints::showConfigForm() {
+    // Load existing settings from Preferences
+    preferences.begin("config", true);  // Open in read mode
+    String savedSSID = preferences.getString("wifi_ssid", "");
+    String savedPassword = preferences.getString("wifi_password", "");
+    String savedEmail = preferences.getString("email", "");
+    String savedSMTP = preferences.getString("smtp_host", "");
+    int savedPort = preferences.getInt("smtp_port", 587);  // Default to 587
+    preferences.end();
+
+    // Generate the HTML response with the pre-filled form
+    String response = "<html><head><style>"
+                      "body { font-family: Arial, sans-serif; }"
+                      "form { max-width: 400px; margin: 20px auto; }"
+                      "input { width: 100%; padding: 8px; margin: 8px 0; }"
+                      "button { padding: 10px; background-color: #2E8B57; color: white; border: none; }"
+                      "</style></head><body>";
+    response += "<h1>Device Configuration</h1>";
+    response += "<form action='/config' method='POST'>";
+    response += "<label for='ssid'>Wi-Fi SSID:</label>";
+    response += "<input type='text' name='ssid' value='" + savedSSID + "'><br>";
+    response += "<label for='password'>Wi-Fi Password:</label>";
+    response += "<input type='password' name='password' value='" + savedPassword + "'><br>";
+    response += "<label for='email'>Email Address:</label>";
+    response += "<input type='email' name='email' value='" + savedEmail + "'><br>";
+    response += "<label for='smtp'>SMTP Host:</label>";
+    response += "<input type='text' name='smtp' value='" + savedSMTP + "'><br>";
+    response += "<label for='port'>SMTP Port:</label>";
+    response += "<input type='number' name='port' value='" + String(savedPort) + "'><br>";
+    response += "<button type='submit'>Save Settings</button>";
+    response += "</form></body></html>";
+
+    server.send(200, "text/html", response);
+}
+
+
+
+
+void WebEndpoints::handleConfig() {
+    if (server.hasArg("ssid") && server.hasArg("password") && 
+        server.hasArg("email") && server.hasArg("smtp") && server.hasArg("port")) {
+        
+        String ssid = server.arg("ssid");
+        String password = server.arg("password");
+        String email = server.arg("email");
+        String smtpHost = server.arg("smtp");
+        int smtpPort = server.arg("port").toInt();
+
+        // Save the settings to Preferences
+        preferences.begin("config", false);  // Open namespace for writing
+        preferences.putString("wifi_ssid", ssid);
+        preferences.putString("wifi_password", password);
+        preferences.putString("email", email);
+        preferences.putString("smtp_host", smtpHost);
+        preferences.putInt("smtp_port", smtpPort);
+        preferences.end();  // Close Preferences
+
+        Serial.println("Settings updated!");
+        server.send(200, "text/html", "<h1>Configuration Saved!</h1><p><a href='/'>Go back</a></p>");
+    } else {
+        server.send(400, "text/html", "<h1>Invalid Input</h1><p>Please fill all fields.</p><p><a href='/config'>Try again</a></p>");
+    }
 }

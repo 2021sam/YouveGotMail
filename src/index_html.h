@@ -26,6 +26,7 @@ const char pageContent[] PROGMEM = R"(
     <li><a href="/alert">Send Test Email</a></li>
     <li><a href="/all">Auto Refresh All</a></li>
     <li><a href="/log">View Logs</a></li>  <!-- New link to view logs -->
+    <li><a href="/config">Configure Settings</a></li>  <!-- New link for configuration -->
   </ul>
 </body>
 </html>
