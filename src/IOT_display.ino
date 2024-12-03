@@ -75,7 +75,7 @@ void setup() {
     display.showStatusMessage(ipAddress);
     delay(2000);
     attachInterrupt(BUTTON_PIN, handleButtonPress, CHANGE); // Trigger on both press and release
-  // Initialize Wi-Fi and button functionality
+    // Initialize Wi-Fi and button functionality
     setupWiFiAndButton();
 
     // Initialize sensors
