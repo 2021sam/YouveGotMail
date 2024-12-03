@@ -72,10 +72,20 @@ void setup() {
 
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
+    
     display.showStatusMessage(ipAddress);
     delay(2000);
 
     attachInterrupt(BUTTON_PIN, handleButtonPress, CHANGE); // Trigger on both press and release
+
+
+
+
+    // Create FreeRTOS tasks
+    // xTaskCreate(wifiTask, "WiFi Task", 4096, NULL, 1, NULL);  // Higher stack for Wi-Fi
+    // xTaskCreate(buttonTask, "Button Task", 2048, NULL, 1, NULL);  // Standard stack for button
+
+
   // Initialize Wi-Fi and button functionality
     setupWiFiAndButton();
 

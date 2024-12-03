@@ -78,12 +78,7 @@ String setup_WiFi(TFTDisplay& display)
         loadWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);  // Load saved Wi-Fi credentials
         // display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
     }
- display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
-    // Serial.println();
-    // Serial.println("Connecting to Wi-Fi: ");
-    // Serial.println(WIFI_SSID);
-    // Serial.println(WIFI_PASSWORD);
-    // display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
+    display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
     delay(3000);
     int blinkDelay = 500;  // Delay in milliseconds for blinking effect (flashing text)
     int lastBlinkTime = 0;  // Track time for blinking
@@ -96,6 +91,15 @@ String setup_WiFi(TFTDisplay& display)
 
 		if (WiFi.status() != WL_CONNECTED)
 		{
+
+        int BUTTON_PIN = 0;
+        if (digitalRead(BUTTON_PIN) == LOW) {
+            Serial.println("Button pressed! Interrupting Wi-Fi connection...");
+            display.showStatusMessage("Web Portal AP started: ESP_AP_Config, IP address: 192.168.4.1");
+            startAPMode();  // Start AP mode for Wi-Fi configuration
+            ESP.restart();
+        };
+
             // Flash the "Connecting to Wi-Fi..." text every 500ms
             unsigned long currentMillis = millis();
             if (currentMillis - lastBlinkTime >= blinkDelay) {
