@@ -69,23 +69,12 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
-
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     
     display.showStatusMessage(ipAddress);
     delay(2000);
-
     attachInterrupt(BUTTON_PIN, handleButtonPress, CHANGE); // Trigger on both press and release
-
-
-
-
-    // Create FreeRTOS tasks
-    // xTaskCreate(wifiTask, "WiFi Task", 4096, NULL, 1, NULL);  // Higher stack for Wi-Fi
-    // xTaskCreate(buttonTask, "Button Task", 2048, NULL, 1, NULL);  // Standard stack for button
-
-
   // Initialize Wi-Fi and button functionality
     setupWiFiAndButton();
 
@@ -144,19 +133,14 @@ void loop() {
 }
 
 void scheduledTasks(){
-    // checkWiFiConnection(display); // Check if Wi-Fi is connected, reconnect if necessary
-    int rssi = WiFi.RSSI();
     float lux, currentDistance;
     String currentTime = getCurrentTime();  // Get current time via Alert class
+    int rssi = WiFi.RSSI();
 
     if (distanceSensor.isOnline()) {
         lux = lightSensor.getLightLevel();
         currentDistance = distanceSensor.getDistance();
         updateSensorValues(rssi, lux, currentDistance);
-        // String currentTime = getCurrentTime();  // Get current time via Alert class
-        // Print RSSI, distance, and light level on one line
-        // Display all data on the TFT screen
-        // display.showAllData(currentDistance, lux, rssi, currentTime);
         alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
     }
     else {
