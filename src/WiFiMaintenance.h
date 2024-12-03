@@ -91,7 +91,7 @@ String setup_WiFi(TFTDisplay& display)
 
     while (WiFi.status() != WL_CONNECTED) {
         WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-        delay(5000);  // Wait for 5 seconds before retrying
+        delay(500);  // Wait for 5 seconds before retrying
         Serial.print(".");
 
 		if (WiFi.status() != WL_CONNECTED)
