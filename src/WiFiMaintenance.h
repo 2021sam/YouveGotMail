@@ -12,8 +12,8 @@ Preferences preferences;  // Create an instance of the Preferences class
 
 void deleteWiFiCredentials() {
     preferences.begin("wifi", false);
-    preferences.remove("ssid");
-    preferences.remove("password");
+    preferences.remove("wifi_ssid");
+    preferences.remove("wifi_password");
     preferences.end();
     Serial.println("Wi-Fi credentials erased.");
 }
@@ -22,16 +22,16 @@ void deleteWiFiCredentials() {
 // Function to load Wi-Fi credentials from Preferences
 void loadWiFiCredentials(String &ssid, String &password) {
     preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
-    ssid = preferences.getString("ssid", "");  // Read SSID, or use default if not set
-    password = preferences.getString("password", "");  // Read password, or use default
+    ssid = preferences.getString("wifi_ssid", "");  // Read SSID, or use default if not set
+    password = preferences.getString("wifi_password", "");  // Read password, or use default
     preferences.end();  // Close Preferences
 }
 
 // Function to save Wi-Fi credentials to Preferences
 void saveWiFiCredentials(const String &ssid, const String &password) {
     preferences.begin("wifi", false);  // Open "wifi" namespace for writing credentials
-    preferences.putString("ssid", ssid);  // Save SSID
-    preferences.putString("password", password);  // Save password
+    preferences.putString("wifi_ssid", ssid);  // Save SSID
+    preferences.putString("wifi_password", password);  // Save password
     preferences.end();  // Close Preferences
 }
 

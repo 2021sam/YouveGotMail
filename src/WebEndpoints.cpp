@@ -152,16 +152,25 @@ void WebEndpoints::handleLog() {
 
 
 void WebEndpoints::showConfigForm() {
-    // Load existing settings from Preferences
-    preferences.begin("config", true);  // Open in read mode
-    String savedSSID = preferences.getString("wifi_ssid", "");
-    String savedPassword = preferences.getString("wifi_password", "");
-    String savedEmail = preferences.getString("email", "");
-    String savedSMTP = preferences.getString("smtp_host", "");
-    int savedPort = preferences.getInt("smtp_port", 587);  // Default to 587
-    preferences.end();
+    // Load Wi-Fi credentials from "wifi" namespace
+    preferences.begin("wifi", true);  // Open Wi-Fi namespace for reading
+    String savedSSID = preferences.getString("wifi_ssid", "");  // Default to empty if not set
+    String savedPassword = preferences.getString("wifi_password", "");  // Default to empty if not set
+    preferences.end();  // Close Wi-Fi namespace
 
-    // Generate the HTML response with the pre-filled form
+    // Load other settings from "config" namespace
+    preferences.begin("config", true);  // Open Config namespace for reading
+    String savedEmail1 = preferences.getString("recipient_email_1", "");  // Recipient Email 1
+    String savedEmail2 = preferences.getString("recipient_email_2", "");  // Recipient Email 2
+    String savedEmail3 = preferences.getString("recipient_email_3", "");  // Recipient Email 3
+    String savedSMTP = preferences.getString("smtp_host", "smtp.gmail.com");  // SMTP Host
+    int savedPort = preferences.getInt("smtp_port", 587);  // Default SMTP Port
+    String savedHostname = preferences.getString("wifi_hostname", "Got_Mail");  // Wi-Fi Hostname
+    String savedAuthorEmail = preferences.getString("author_email", "");  // Email for sending alerts
+    String savedAuthorPassword = preferences.getString("author_password", "");  // Password for the sender email
+    preferences.end();  // Close Config namespace
+
+    // Generate the configuration form
     String response = "<html><head><style>"
                       "body { font-family: Arial, sans-serif; }"
                       "form { max-width: 400px; margin: 20px auto; }"
@@ -170,16 +179,40 @@ void WebEndpoints::showConfigForm() {
                       "</style></head><body>";
     response += "<h1>Device Configuration</h1>";
     response += "<form action='/config' method='POST'>";
+    
+    // Wi-Fi settings
     response += "<label for='ssid'>Wi-Fi SSID:</label>";
     response += "<input type='text' name='ssid' value='" + savedSSID + "'><br>";
     response += "<label for='password'>Wi-Fi Password:</label>";
     response += "<input type='password' name='password' value='" + savedPassword + "'><br>";
-    response += "<label for='email'>Email Address:</label>";
-    response += "<input type='email' name='email' value='" + savedEmail + "'><br>";
+    
+    // Email settings for sending alerts
+    response += "<label for='recipient_email_1'>Recipient Email 1:</label>";
+    response += "<input type='email' name='recipient_email_1' value='" + savedEmail1 + "'><br>";
+    response += "<label for='recipient_email_2'>Recipient Email 2:</label>";
+    response += "<input type='email' name='recipient_email_2' value='" + savedEmail2 + "'><br>";
+    response += "<label for='recipient_email_3'>Recipient Email 3:</label>";
+    response += "<input type='email' name='recipient_email_3' value='" + savedEmail3 + "'><br>";
+    
+    // Author Email (Sender's email)
+    response += "<label for='author_email'>Sender Email:</label>";
+    response += "<input type='email' name='author_email' value='" + savedAuthorEmail + "'><br>";
+    
+    // Author Password (App password for email)
+    response += "<label for='author_password'>Sender Email Password:</label>";
+    response += "<input type='password' name='author_password' value='" + savedAuthorPassword + "'><br>";
+    
+    // SMTP settings
     response += "<label for='smtp'>SMTP Host:</label>";
     response += "<input type='text' name='smtp' value='" + savedSMTP + "'><br>";
     response += "<label for='port'>SMTP Port:</label>";
     response += "<input type='number' name='port' value='" + String(savedPort) + "'><br>";
+
+    // Wi-Fi Hostname
+    response += "<label for='wifi_hostname'>Wi-Fi Hostname:</label>";
+    response += "<input type='text' name='wifi_hostname' value='" + savedHostname + "'><br>";
+
+    // Submit Button
     response += "<button type='submit'>Save Settings</button>";
     response += "</form></body></html>";
 
@@ -189,28 +222,37 @@ void WebEndpoints::showConfigForm() {
 
 
 
+// Handle form submission and save settings
 void WebEndpoints::handleConfig() {
-    if (server.hasArg("ssid") && server.hasArg("password") && 
-        server.hasArg("email") && server.hasArg("smtp") && server.hasArg("port")) {
-        
-        String ssid = server.arg("ssid");
-        String password = server.arg("password");
-        String email = server.arg("email");
-        String smtpHost = server.arg("smtp");
-        int smtpPort = server.arg("port").toInt();
+    if (server.hasArg("recipient_email_1") && server.hasArg("smtp_host") &&
+        server.hasArg("smtp_port") && server.hasArg("author_email") &&
+        server.hasArg("author_password") && server.hasArg("wifi_hostname")) {
 
-        // Save the settings to Preferences
-        preferences.begin("config", false);  // Open namespace for writing
-        preferences.putString("wifi_ssid", ssid);
-        preferences.putString("wifi_password", password);
-        preferences.putString("email", email);
+        // Retrieve form data
+        String recipientEmail1 = server.arg("recipient_email_1");
+        String recipientEmail2 = server.arg("recipient_email_2");
+        String recipientEmail3 = server.arg("recipient_email_3");
+        String smtpHost = server.arg("smtp_host");
+        int smtpPort = server.arg("smtp_port").toInt();
+        String authorEmail = server.arg("author_email");
+        String authorPassword = server.arg("author_password");
+        String wifiHostname = server.arg("wifi_hostname");
+
+        // Save data to Preferences
+        preferences.begin("config", false);  // Open the "config" namespace
+        preferences.putString("recipient_email_1", recipientEmail1);
+        preferences.putString("recipient_email_2", recipientEmail2);
+        preferences.putString("recipient_email_3", recipientEmail3);
         preferences.putString("smtp_host", smtpHost);
         preferences.putInt("smtp_port", smtpPort);
+        preferences.putString("author_email", authorEmail);
+        preferences.putString("author_password", authorPassword);
+        preferences.putString("wifi_hostname", wifiHostname);
         preferences.end();  // Close Preferences
 
-        Serial.println("Settings updated!");
-        server.send(200, "text/html", "<h1>Configuration Saved!</h1><p><a href='/'>Go back</a></p>");
+        Serial.println("Configuration saved!");
+        server.send(200, "text/html", "<h1>Configuration Saved</h1><p><a href='/'>Go back</a></p>");
     } else {
-        server.send(400, "text/html", "<h1>Invalid Input</h1><p>Please fill all fields.</p><p><a href='/config'>Try again</a></p>");
+        server.send(400, "text/html", "<h1>Invalid Input</h1><p>Please fill all required fields.</p><p><a href='/config'>Try again</a></p>");
     }
 }

@@ -25,7 +25,15 @@ void IRAM_ATTR handleButtonPress() {
         buttonPressed = false; // Reset the pressed flag on release
         Serial.println("z");
         // startAPMode();
-                     triggerAPMode = true;  // Set flag to trigger AP mode
+                    unsigned long currentTime = millis();
+            if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
+                buttonPressed = true; // Valid 3-second press detected
+                // Serial.println("Cool"); // Works repeats
+
+                triggerAPMode = true;  // Set flag to trigger AP mode
+            }
+
+
     }
 }
 
@@ -36,13 +44,14 @@ void buttonTask(void *parameter) {
         // Serial.println("c");
         if (isButtonHeld) {
             // Serial.println("-");
-            unsigned long currentTime = millis();
-            if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
-                buttonPressed = true; // Valid 3-second press detected
-                // Serial.println("Cool"); // Works repeats
 
-                            //  triggerAPMode = true;  // Set flag to trigger AP mode
-            }
+            // unsigned long currentTime = millis();
+            // if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
+            //     buttonPressed = true; // Valid 3-second press detected
+            //     // Serial.println("Cool"); // Works repeats
+
+            //                 //  triggerAPMode = true;  // Set flag to trigger AP mode
+            // }
         }
 
         if (buttonPressed) {
