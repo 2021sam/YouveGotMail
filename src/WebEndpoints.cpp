@@ -224,9 +224,7 @@ void WebEndpoints::showConfigForm() {
 
 // Handle form submission and save settings
 void WebEndpoints::handleConfig() {
-    if (server.hasArg("recipient_email_1") && server.hasArg("smtp_host") &&
-        server.hasArg("smtp_port") && server.hasArg("author_email") &&
-        server.hasArg("author_password") && server.hasArg("wifi_hostname")) {
+    if (true) {
 
         // Retrieve form data
         String recipientEmail1 = server.arg("recipient_email_1");
