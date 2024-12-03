@@ -128,6 +128,9 @@ void loop() {
         // Serial.println("********************* Now...");
         // startAPMode();  // Call the AP mode function
         deleteWiFiCredentials();
+        display.showStatusMessage("Credentials Erased... Restarting...");
+        delay(2000);
+        ESP.restart();
     }
 
 
@@ -159,8 +162,8 @@ void scheduledTasks(){
     else {
             updateSensorValues(rssi, -1, -1);
             bool resurrectTOF = distanceSensor.resetSensor();
-            Serial.print("Resurrected TOF: ");
-            Serial.println(resurrectTOF);
+            // Serial.print("Resurrected TOF: ");
+            // Serial.println(resurrectTOF);
             if (resurrectTOF)
                 addToLog("Distance sensor is resurrected & back online.");
     }

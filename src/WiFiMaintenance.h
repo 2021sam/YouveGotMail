@@ -75,14 +75,16 @@ String setup_WiFi(TFTDisplay& display)
         display.showStatusMessage("Web Portal AP started: ESP_AP_Config, AP IP address: 192.168.4.1");
         delay(2000);
         startAPMode();
+        loadWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);  // Load saved Wi-Fi credentials
+        // display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
     }
-
-    Serial.println();
-    Serial.println("Connecting to Wi-Fi: ");
-    Serial.println(WIFI_SSID);
-    Serial.println(WIFI_PASSWORD);
-    display.showStatusMessage("Connecting to NEW Wi-Fi: " + String(WIFI_SSID) + " PASSWORD: " + String(WIFI_PASSWORD));
-
+ display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
+    // Serial.println();
+    // Serial.println("Connecting to Wi-Fi: ");
+    // Serial.println(WIFI_SSID);
+    // Serial.println(WIFI_PASSWORD);
+    // display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
+    delay(3000);
     int blinkDelay = 500;  // Delay in milliseconds for blinking effect (flashing text)
     int lastBlinkTime = 0;  // Track time for blinking
     bool showText = true;  // Toggle to switch between showing and hiding the text
@@ -103,12 +105,12 @@ String setup_WiFi(TFTDisplay& display)
                 if (showText) {
                     // Show "Connecting to Wi-Fi" message with RSSI value
                     int rssi = WiFi.RSSI();  // Get the current RSSI value
-                    display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + " RSSI: " + String(rssi));
+                    display.showStatusMessage("Wi-Fi: " + String(WIFI_SSID) + " RSSI: " + String(rssi));
+                     delay(3000);
                 } else {
                     display.showStatusMessage("");  // Clear text on screen
                 }
             }
-
 
 			WiFi.disconnect();  // Disconnect from any existing Wi-Fi connections
 			delay(1000);  // Small delay to ensure Wi-Fi is disconnected before starting new connection
