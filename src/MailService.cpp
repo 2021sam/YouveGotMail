@@ -18,14 +18,36 @@ MailService::MailService(const char* senderEmail, const char* senderPassword, co
 
 
 void MailService::sendEmail(const String& htmlMsg) {
+    Serial.print("sendEmail");
     SMTP_Message message;
     message.sender.name = F("ESP Mail");
     message.sender.email = senderEmail;
     message.subject = F("You've Got Mail!");
-    // Add recipients from the list
-    for (int i = 0; i < numRecipients; i++) {
+
+    // // Add recipients from the list
+    // Serial.print("numRecipients: ");
+    // Serial.println(numRecipients);
+    // for (int i = 0; i < numRecipients; i++) {
+    //     message.addRecipient(F("Recipient"), recipients[i]);
+        
+    // }
+
+
+Serial.print("numRecipients: ");
+Serial.println(numRecipients);
+
+for (int i = 0; i < numRecipients; i++) {
+    if (strlen(recipients[i]) > 0) {  // Check if the recipient email is not blank
+        Serial.print("Adding recipient: ");
+        Serial.println(recipients[i]);
         message.addRecipient(F("Recipient"), recipients[i]);
+    } else {
+        Serial.print("Skipping empty recipient for index: ");
+        Serial.println(i);
     }
+}
+
+
 
     message.html.content = htmlMsg;
     message.html.charSet = F("utf-8");
