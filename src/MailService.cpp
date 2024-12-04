@@ -39,8 +39,10 @@ void MailService::sendEmail(const String& htmlMsg) {
 
     SMTP_Message message;
     message.sender.name = F("ESP Mail");
-    // message.sender.email = senderEmail;
-    message.sender.email = F("2020sentinel@gmail.com");
+    message.sender.email = senderEmail;
+    // message.sender.email = F("2020sentinel@gmail.com");
+
+
     message.subject = F("You've Got Mail!");
 
     // // Add recipients from the list
