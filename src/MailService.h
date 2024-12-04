@@ -8,7 +8,10 @@ public:
     MailService(const char* senderEmail, const char* senderPassword, const char* smtpHost, int smtpPort, 
                 const char* recipients[], int numRecipients);
 
-    void sendEmail(const String& htmlMsg);
+    // Destructor
+    ~MailService();
+
+    bool sendEmail(const String& htmlMsg);
 
 
 // private:
@@ -17,8 +20,8 @@ public:
     const char* senderPassword;
     const char* smtpHost;
     int smtpPort;
-    // const char** recipients;
-    const char* recipients[3];
+    const char** recipients;
+    // const char* recipients[3];
     int numRecipients;
     
     // These are your class members that hold the SMTP session and configuration

@@ -62,5 +62,20 @@ void loadConfigSettings(String &email1, String &email2, String &email3,
 void updateSensorValues(int rssi, float lux, float tof);
 
 MailService* getMailService();
+// Declare a global pointer to MailService
+extern MailService* globalMailService;  
+
+// Function to initialize the global MailService
+void initializeMailService(
+    const char* senderEmail,
+    const char* senderPassword,
+    const char* smtpHost,
+    int smtpPort,
+    const char* recipients[],
+    int numRecipients
+);
+
+// Function to send an email using the global MailService
+void sendGlobalEmail(const String& htmlMsg);
 
 #endif // GLOBAL_UTILS_H

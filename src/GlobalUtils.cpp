@@ -13,6 +13,9 @@ float previousTof = 0.0;
 float minLux = 1e6, maxLux = -1e6;
 float minTof = 1e6, maxTof = -1e6, maxTof_inClosedState = -1e6;
 int minRSSI = 32767, maxRSSI = -32768;
+// Declare and initialize the global variable
+MailService* globalMailService = nullptr;
+
 
 String systemLog[20];  // Array to hold the log entries
 int logIndex = 0;      // Index to track where to add the new log entry
@@ -129,7 +132,13 @@ ConfigSettings loadConfigSettings() {
     config.authorPassword = preferences.getString("author_password", "");
 
     preferences.end();
-    Serial.println("Loaded Config Settings");
+    Serial.println("Loaded Config Settings:");
+    Serial.println("Author Email: " + config.authorEmail);
+    Serial.println("SMTP Host: " + config.smtpHost);
+    Serial.println("SMTP Port: " + String(config.smtpPort));
+    Serial.println("Recipient 1: " + config.recipientEmail1);
+    Serial.println("Recipient 2: " + config.recipientEmail2);
+    Serial.println("Recipient 3: " + config.recipientEmail3);
     return config;
 }
 
@@ -154,33 +163,6 @@ void saveConfigSettings(const String& email1, const String& email2, const String
     preferences.end();  // Close preferences
     Serial.println("Configuration saved successfully.");
 }
-
-
-// MailService* getMailService() {
-//     ConfigSettings config = loadConfigSettings();
-
-//     const char* senderEmail = config.authorEmail.c_str();
-//     const char* senderPassword = config.authorPassword.c_str();
-//     const char* smtpHost = config.smtpHost.c_str();
-
-//     const char* recipients[3] = {
-//         config.recipientEmail1.c_str(),
-//         config.recipientEmail2.c_str(),
-//         config.recipientEmail3.c_str()
-//     };
-//     Serial.println(recipients[0]);
-//     Serial.println("getMailService - end");
-
-//     // return new MailService(
-//     //     senderEmail, senderPassword, smtpHost,
-//     //     config.smtpPort, recipients, 3
-//     // );
-//         return new MailService(
-//         senderEmail, senderPassword, smtpHost,
-//         esp_mail_smtp_port_587, recipients, 3
-//     );
-
-// }
 
 
 MailService* getMailService() {
@@ -224,4 +206,13 @@ MailService* getMailService() {
         recipients,
         3
     );
+}
+
+
+void sendGlobalEmail(const String& htmlMsg) {
+    if (globalMailService) {
+        globalMailService->sendEmail(htmlMsg);
+    } else {
+        Serial.println("Error: MailService is not initialized!");
+    }
 }

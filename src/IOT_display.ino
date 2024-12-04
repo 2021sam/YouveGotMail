@@ -105,6 +105,7 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
+    delay(10000);
     // Load configuration settings
     ConfigSettings config = loadConfigSettings();
 
@@ -119,6 +120,9 @@ void setup() {
         config.recipientEmail3.c_str()
     };
 
+    // Serial.println("*************************************");
+    // Serial.println(senderEmail);
+
     // // Dynamically initialize MailService      12/3     2
     // mailService = new MailService(
     //     senderEmail,           // Sender email
@@ -128,6 +132,26 @@ void setup() {
     //     recipients,            // Recipients
     //     3                      // Number of recipients
     // );
+
+  // Initialize globalMailService
+    globalMailService = new MailService(
+        senderEmail,           // Sender email
+        senderPassword,        // Sender password
+        smtpHost,              // SMTP host
+        config.smtpPort,       // SMTP port
+        recipients,            // Recipients
+        3                      // Number of recipients
+    );
+
+    if (globalMailService == nullptr) {
+        Serial.println("Failed to initialize MailService!");
+    } else {
+        Serial.println("MailService initialized successfully.");
+    }
+
+    Serial.println("*************************************");
+    // Serial.println(senderEmail);
+    Serial.println(globalMailService->senderEmail);
 
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);

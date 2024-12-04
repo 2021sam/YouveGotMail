@@ -99,37 +99,87 @@ void WebEndpoints::handleRSSI() {
     server.send(200, "text/plain", response);
 }
 
-// Handle the email alert endpoint
+// // Handle the email alert endpoint
+// void WebEndpoints::handleEmailAlert() {
+
+//         // Create the HTML message
+//         String htmlMsg = "<p>Time: " + getCurrentTime() + "</p>" // Include the current time
+//                         "<p>Previous distance: " + String(previousTof) + " cm</p>"
+//                         "<p>Current distance: " + String(currentTof) + " cm</p>"
+//                         "<p>Lux: " + String(currentLux) + "</p>"
+//                         "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
+//                         "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
+
+//     if (globalMailService == nullptr) {
+//         Serial.println("globalMailService is not initialized!");
+//         server.send(500, "text/html", "<h1>Error: Mail service not initialized.</h1><p><a href='/'>Go back</a></p>");
+//         return;
+//     }
+
+
+//         // mailService->sendEmail(htmlMsg);
+
+
+
+//         String statusMessage = "Email sent: Mailbox is open.";
+//         Serial.println(statusMessage);
+//         addToLog(statusMessage);
+
+//     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
+// }
+
+
+
+
+
+
+
 void WebEndpoints::handleEmailAlert() {
-
-        // Create the HTML message
-        String htmlMsg = "<p>Time: " + getCurrentTime() + "</p>" // Include the current time
-                        "<p>Previous distance: " + String(previousTof) + " cm</p>"
-                        "<p>Current distance: " + String(currentTof) + " cm</p>"
-                        "<p>Lux: " + String(currentLux) + "</p>"
-                        "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
-                        "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
-
-    // mailService->sendEmail(htmlMsg);
-    //  *****************************************************************
-
-    MailService* mailService = getMailService();  // Updated function name
-    Serial.println("mailService");
-    // Serial.println(mailService->recipients[0]);
-    Serial.println(mailService->senderEmail);
-    Serial.println("BBBBBBBBBBBBBBBBB");
-    if (mailService == nullptr) {
-        Serial.println("Failed to initialize MailService!");
+    if (globalMailService == nullptr) {
+        Serial.println("globalMailService is not initialized!");
+        server.send(500, "text/html", "<h1>Error: Mail service not initialized.</h1><p><a href='/'>Go back</a></p>");
         return;
     }
-        Serial.println("AAAAAAAAAAAAAAA");
-        mailService->sendEmail(htmlMsg);
-        String statusMessage = "Email sent: Mailbox is open.";
-        Serial.println(statusMessage);
-        addToLog(statusMessage);
 
+    // Create the HTML message
+    String htmlMsg = "<p>Time: " + getCurrentTime() + "</p>" // Include the current time
+                     "<p>Previous distance: " + String(previousTof) + " cm</p>"
+                     "<p>Current distance: " + String(currentTof) + " cm</p>"
+                     "<p>Lux: " + String(currentLux) + "</p>"
+                     "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
+                     "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
+
+    // Debug information
+    Serial.println("Using globalMailService to send email.");
+    Serial.print("Sender Email: ");
+    Serial.println("*************************************");
+    Serial.println(globalMailService->senderEmail);
+
+
+    // Attempt to send the email
+    if (!globalMailService->sendEmail(htmlMsg)) {
+        String errorMessage = "Failed to send email: Check your SMTP configuration.";
+        Serial.println(errorMessage);
+        addToLog(errorMessage);
+        server.send(500, "text/html", "<h1>Error: Failed to send email.</h1><p><a href='/'>Go back</a></p>");
+        return;
+    }
+
+    // Log success and send response
+    String statusMessage = "Email sent successfully!";
+    Serial.println(statusMessage);
+    addToLog(statusMessage);
+
+    // Respond to the HTTP request
     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
 }
+
+
+
+
+
+
+
 
 // Check if the current time is within the delivery window
 bool WebEndpoints::isWithinDeliveryWindow() {

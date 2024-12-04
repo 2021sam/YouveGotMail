@@ -2,28 +2,28 @@
 
 MailService::MailService(const char* senderEmail, const char* senderPassword, const char* smtpHost, int smtpPort, 
                          const char* recipients[], int numRecipients) {
-    this->senderEmail = senderEmail;
-    this->senderPassword = senderPassword;
-    this->smtpHost = smtpHost;
+    this->senderEmail = strdup(senderEmail);
+    this->senderPassword = strdup(senderPassword);
+    this->smtpHost = strdup(smtpHost);
     this->smtpPort = smtpPort;
     // this->recipients = recipients;
     this->numRecipients = numRecipients;
     Serial.println("MailService - Constructor");
-
-
     Serial.println(this->senderEmail);
 
-
-  // Initialize recipients
-        for (int i = 0; i < 1; i++) {
-            Serial.println(recipients[i]);
-            this->recipients[i] = recipients[i];
-            Serial.print("this->");
+    // Initialize the recipients array
+    this->recipients = new const char*[numRecipients];
+    for (int i = 0; i < numRecipients; i++) {
+        if (recipients[i] != nullptr && strlen(recipients[i]) > 0) {
+            this->recipients[i] = strdup(recipients[i]); // Duplicate strings for safety
+            Serial.print("Recipient added: ");
             Serial.println(this->recipients[i]);
+        } else {
+            this->recipients[i] = nullptr; // Handle empty or null recipients
+            Serial.print("Skipping empty recipient for index: ");
+            Serial.println(i);
         }
-
-
-
+    }
 
     // Initialize the session configuration
     config.login.email = senderEmail;
@@ -33,7 +33,16 @@ MailService::MailService(const char* senderEmail, const char* senderPassword, co
 }
 
 
-void MailService::sendEmail(const String& htmlMsg) {
+MailService::~MailService() {
+    for (int i = 0; i < numRecipients; i++) {
+        if (this->recipients[i] != nullptr) {
+            free((void*)this->recipients[i]);
+        }
+    }
+}
+
+
+bool MailService::sendEmail(const String& htmlMsg) {
     Serial.println("sendEmail");
     Serial.println(senderEmail);
 
@@ -105,13 +114,15 @@ Serial.println(smtpPort);
             if (errorReason.length() > 0) {
                 Serial.printf("Connection error: %s\n", errorReason.c_str());
             }
-            return;  // Exit the function if connection fails
+            return false;  // Exit the function if connection fails
         }
 
         // Send email
         if (!MailClient.sendMail(&smtp, &message)) {
             Serial.printf("Error sending email: %s\n", smtp.errorReason().c_str());
+            return false;
         } else {
             Serial.println("Email sent successfully!");
+            return true;
         }
     }
