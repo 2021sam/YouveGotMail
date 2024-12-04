@@ -5,35 +5,37 @@
 #include <Preferences.h>  // Include Preferences to store Wi-Fi credentials
 #include <WiFiManager.h>  // Include WiFiManager to handle AP mode
 #include "TFTDisplay.h"  // Include the TFTDisplay header to use it
-
-Preferences preferences;  // Create an instance of the Preferences class
-
+#include "GlobalUtils.h"  // Include GlobalUtils for Wi-Fi credential functions
 
 
-void deleteWiFiCredentials() {
-    preferences.begin("wifi", false);
-    preferences.remove("wifi_ssid");
-    preferences.remove("wifi_password");
-    preferences.end();
-    Serial.println("Wi-Fi credentials erased.");
-}
+// Preferences preferences;  // Create an instance of the Preferences class
 
 
-// Function to load Wi-Fi credentials from Preferences
-void loadWiFiCredentials(String &ssid, String &password) {
-    preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
-    ssid = preferences.getString("wifi_ssid", "");  // Read SSID, or use default if not set
-    password = preferences.getString("wifi_password", "");  // Read password, or use default
-    preferences.end();  // Close Preferences
-}
 
-// Function to save Wi-Fi credentials to Preferences
-void saveWiFiCredentials(const String &ssid, const String &password) {
-    preferences.begin("wifi", false);  // Open "wifi" namespace for writing credentials
-    preferences.putString("wifi_ssid", ssid);  // Save SSID
-    preferences.putString("wifi_password", password);  // Save password
-    preferences.end();  // Close Preferences
-}
+// void deleteWiFiCredentials() {
+//     preferences.begin("wifi", false);
+//     preferences.remove("wifi_ssid");
+//     preferences.remove("wifi_password");
+//     preferences.end();
+//     Serial.println("Wi-Fi credentials erased.");
+// }
+
+
+// // Function to load Wi-Fi credentials from Preferences
+// void loadWiFiCredentials(String &ssid, String &password) {
+//     preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
+//     ssid = preferences.getString("wifi_ssid", "");  // Read SSID, or use default if not set
+//     password = preferences.getString("wifi_password", "");  // Read password, or use default
+//     preferences.end();  // Close Preferences
+// }
+
+// // Function to save Wi-Fi credentials to Preferences
+// void saveWiFiCredentials(const String &ssid, const String &password) {
+//     preferences.begin("wifi", false);  // Open "wifi" namespace for writing credentials
+//     preferences.putString("wifi_ssid", ssid);  // Save SSID
+//     preferences.putString("wifi_password", password);  // Save password
+//     preferences.end();  // Close Preferences
+// }
 
 
 // Function to start AP mode and let the user configure Wi-Fi credentials

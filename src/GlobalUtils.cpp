@@ -1,4 +1,5 @@
 #include "GlobalUtils.h"  // Include the header to match the declarations
+#include <Preferences.h>
 
 // Define the global variables (memory allocation)
 bool isMailboxOpen = false;
@@ -14,6 +15,8 @@ int minRSSI = 32767, maxRSSI = -32768;
 
 String systemLog[20];  // Array to hold the log entries
 int logIndex = 0;      // Index to track where to add the new log entry
+
+Preferences preferences;  // Preferences instance for configuration storage
 
 
 // Define the getCurrentTime function (only defined here in GlobalUtils.cpp)
@@ -83,4 +86,120 @@ void updateSensorValues(int rssi, float lux, float tof) {
 
     if (rssi < minRSSI) minRSSI = rssi;
     if (rssi > maxRSSI) maxRSSI = rssi;
+}
+
+
+// Function to delete Wi-Fi credentials
+void deleteWiFiCredentials() {
+    preferences.begin("wifi", false);
+    preferences.remove("wifi_ssid");
+    preferences.remove("wifi_password");
+    preferences.end();
+    Serial.println("Wi-Fi credentials erased.");
+}
+
+// Save Wi-Fi credentials
+void saveWiFiCredentials(const String& ssid, const String& password) {
+    preferences.begin("wifi", false);
+    preferences.putString("wifi_ssid", ssid);
+    preferences.putString("wifi_password", password);
+    preferences.end();
+    Serial.println("Wi-Fi credentials saved.");
+}
+
+// Load Wi-Fi credentials
+void loadWiFiCredentials(String& ssid, String& password) {
+    preferences.begin("wifi", true);
+    ssid = preferences.getString("wifi_ssid", "");
+    password = preferences.getString("wifi_password", "");
+    preferences.end();
+}
+
+// Load full configuration settings
+ConfigSettings loadConfigSettings() {
+    ConfigSettings config;
+    preferences.begin("config", true);
+
+    config.recipientEmail1 = preferences.getString("recip_email_1", "");
+    config.recipientEmail2 = preferences.getString("recip_email_2", "");
+    config.recipientEmail3 = preferences.getString("recip_email_3", "");
+    config.smtpHost = preferences.getString("smtp_host", "smtp.gmail.com");
+    config.smtpPort = preferences.getInt("smtp_port", 587);
+    config.wifiHostname = preferences.getString("wifi_hostname", "Got_Mail");
+    config.authorEmail = preferences.getString("author_email", "");
+    config.authorPassword = preferences.getString("author_password", "");
+
+    preferences.end();
+    Serial.println("Loaded Config Settings");
+    return config;
+}
+
+
+
+
+// ConfigSettings loadConfigSettings() {
+//     ConfigSettings config;
+
+//     preferences.begin("config", true);  // Open Preferences for reading
+
+//     // Load previously saved values, or set default values
+//     config.ssid = preferences.getString("wifi_ssid", "");  // Wi-Fi SSID
+//     config.password = preferences.getString("wifi_password", "");  // Wi-Fi Password
+//     config.email1 = preferences.getString("recip_email_1", "default@example.com");
+//     config.email2 = preferences.getString("recip_email_2", "default@example.com");
+//     config.email3 = preferences.getString("recip_email_3", "default@example.com");
+//     config.smtpHost = preferences.getString("smtp_host", "smtp.gmail.com");
+//     config.smtpPort = preferences.getInt("smtp_port", 587);
+//     config.hostname = preferences.getString("wifi_hostname", "Got_Mail");
+//     config.authorEmail = preferences.getString("author_email", "default@example.com");
+//     config.authorPassword = preferences.getString("author_password", "defaultpassword");
+
+//     preferences.end();  // Close Preferences
+
+//     return config;
+// }
+
+
+
+
+
+// // Save configuration settings
+// void saveConfigSettings(const ConfigSettings& config) {
+//     preferences.begin("config", false);
+
+//     preferences.putString("recipient_email_1", config.recipientEmail1);
+//     preferences.putString("recipient_email_2", config.recipientEmail2);
+//     preferences.putString("recipient_email_3", config.recipientEmail3);
+//     preferences.putString("smtp_host", config.smtpHost);
+//     preferences.putInt("smtp_port", config.smtpPort);
+//     preferences.putString("wifi_hostname", config.wifiHostname);
+//     preferences.putString("author_email", config.authorEmail);
+//     preferences.putString("author_password", config.authorPassword);
+
+//     preferences.end();
+//     Serial.println("Configuration settings saved.");
+// }
+
+
+// #include "GlobalUtils.h"
+
+void saveConfigSettings(const String& email1, const String& email2, const String& email3,
+                        const String& smtpHost, int smtpPort, 
+                        const String& authorEmail, const String& authorPassword, 
+                        const String& wifiHostname) {
+    // Save settings logic
+    Serial.println("Saving configuration settings...");
+    preferences.begin("config", false);  // Open preferences in write mode
+
+    preferences.putString("recip_email_1", email1);
+    preferences.putString("recip_email_2", email2);
+    preferences.putString("recip_email_3", email3);
+    preferences.putString("smtp_host", smtpHost);
+    preferences.putInt("smtp_port", smtpPort);
+    preferences.putString("author_email", authorEmail);
+    preferences.putString("author_password", authorPassword);
+    preferences.putString("wifi_hostname", wifiHostname);
+
+    preferences.end();  // Close preferences
+    Serial.println("Configuration saved successfully.");
 }

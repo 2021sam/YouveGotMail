@@ -20,7 +20,7 @@
 #include "MailService.h"  // Include the MailService class
 #include "index_html.h"  // Include the HTML header file
 #include "Alert.h"
-#include "credentials.h"  // Include your credentials for Wi-Fi and email setup
+// #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
 #include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
 #include "GlobalUtils.h"
 #include <WiFiManager.h> // Include WiFiManager
@@ -38,7 +38,33 @@ TFTDisplay display;  // Create a TFTDisplay object
 // Instantiate the TFT display, sensors, and mail service
 DistanceSensor distanceSensor(DISTANCE_SENSOR_ADDRESS);  // Pass the address to the distance sensor
 LightSensor lightSensor(LIGHT_SENSOR_ADDRESS);  // Pass the address to the light sensor
-MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, recipients, NUM_RECIPIENTS);
+// MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, recipients, NUM_RECIPIENTS);
+
+    // // Load configuration settings
+    // ConfigSettings config = loadConfigSettings();
+
+    // // Convert String values to const char*
+    // const char* senderEmail = config.authorEmail.c_str();
+    // const char* senderPassword = config.authorPassword.c_str();
+    // const char* smtpHost = config.smtpHost.c_str();
+
+    // const char* recipients[3] = {
+    //     config.recipientEmail1.c_str(),
+    //     config.recipientEmail2.c_str(),
+    //     config.recipientEmail3.c_str()
+    // };
+
+    // // Dynamically initialize MailService with loaded configuration
+    // MailService mailService(
+    //     senderEmail,           // Sender email
+    //     senderPassword,        // Sender password
+    //     smtpHost,              // SMTP host
+    //     config.smtpPort,       // SMTP port
+    //     recipients,            // Recipients
+    //     3                      // Number of recipients
+    // );
+// Declare MailService globally as a pointer
+MailService* mailService = nullptr;
 
 
 // Email-related variables
@@ -51,7 +77,17 @@ const int deliveryStartHour = 8;  // 8 AM
 const int deliveryEndHour = 17;   // 5 PM
 
 WebServer server(80); // Web server listening on port 80
-WebEndpoints endpoints(server, &mailService, systemLog, logIndex);
+
+
+// WebEndpoints endpoints(server, &mailService, systemLog, logIndex);
+
+
+// Commented 12/3      1
+WebEndpoints endpoints(server, mailService, systemLog, logIndex);   
+
+
+
+
 // Pointer for Alert class
 Alert* alert = nullptr;
 
@@ -69,11 +105,53 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
+
+
+
+
+
+
+    // Load configuration settings
+    ConfigSettings config = loadConfigSettings();
+
+    // Convert String values to const char*
+    const char* senderEmail = config.authorEmail.c_str();
+    const char* senderPassword = config.authorPassword.c_str();
+    const char* smtpHost = config.smtpHost.c_str();
+
+    const char* recipients[3] = {
+        config.recipientEmail1.c_str(),
+        config.recipientEmail2.c_str(),
+        config.recipientEmail3.c_str()
+    };
+
+    // Dynamically initialize MailService      12/3     2
+    mailService = new MailService(
+        senderEmail,           // Sender email
+        senderPassword,        // Sender password
+        smtpHost,              // SMTP host
+        config.smtpPort,       // SMTP port
+        recipients,            // Recipients
+        3                      // Number of recipients
+    );
+
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
-    
     display.showStatusMessage(ipAddress);
     delay(2000);
+
+
+
+
+
+
+
+
+    // // Setup Wi-Fi connection
+    // String ipAddress = setup_WiFi(display);
+    
+    // display.showStatusMessage(ipAddress);
+    // delay(2000);
     attachInterrupt(BUTTON_PIN, handleButtonPress, CHANGE); // Trigger on both press and release
     // Initialize Wi-Fi and button functionality
     setupWiFiAndButton();
@@ -93,7 +171,12 @@ void setup() {
     Serial.println("WebServer started");
 
     previousTof = distanceSensor.getDistance();
-    alert = new Alert(mailService, deliveryStartHour, deliveryEndHour);
+    // alert = new Alert(*mailService, deliveryStartHour, deliveryEndHour);
+
+    // Initialize Alert with the dereferenced MailService pointer
+    // alert = new Alert(*mailService, deliveryStartHour, deliveryEndHour);
+
+
     // addToLog("Device IP Address: " + ipAddress);
     addToLog("Initial Distance: " + String(previousTof));
 
@@ -141,7 +224,7 @@ void scheduledTasks(){
         lux = lightSensor.getLightLevel();
         currentDistance = distanceSensor.getDistance();
         updateSensorValues(rssi, lux, currentDistance);
-        alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
+        // alert->checkAndSendEmail();  // Check alert conditions and send email if necessary
     }
     else {
             lux = -1;
