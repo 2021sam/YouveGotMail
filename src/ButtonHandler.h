@@ -14,6 +14,4 @@ void setupWiFiAndButton();
 
 extern void startAPMode(); // Declare external function for WiFi reset logic
 
-// extern WiFiManager wm;
-
 #endif

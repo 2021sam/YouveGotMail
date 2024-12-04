@@ -198,10 +198,7 @@ void WebEndpoints::showConfigForm() {
 
 
 void WebEndpoints::handleConfig() {
-    if (server.hasArg("email1") || server.hasArg("email2") || server.hasArg("email3") || 
-        server.hasArg("smtp") || server.hasArg("port") || 
-        server.hasArg("author_email") || server.hasArg("author_password") || 
-        server.hasArg("hostname")) {
+    if (true) {
 
         // Read the fields from the POST request
         String wifiSsid = server.arg("wifi_ssid");

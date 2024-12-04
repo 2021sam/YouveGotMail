@@ -1,39 +1,29 @@
 #include "ButtonHandler.h"
 
-// WiFiManager wm; // WiFiManager instance
-
 // Button state tracking variables
 volatile bool buttonPressed = false;    // Flag for button press
 volatile unsigned long pressStartTime = 0; // Time when the button was first pressed
 volatile bool isButtonHeld = false;     // Tracks if the button is being held
-
 volatile bool triggerAPMode = false;  // Flag to trigger AP mode
 
 
 // Interrupt Service Routine (ISR) for the button
 void IRAM_ATTR handleButtonPress() {
-    // Serial.println("a");        // works
     if (digitalRead(BUTTON_PIN) == LOW) { // Button pressed
-        // Serial.println("x");
         if (!isButtonHeld) {
             pressStartTime = millis();   // Record the start time
             isButtonHeld = true;
-            // Serial.println(".");
         }
     } else { // Button released
         isButtonHeld = false;
         buttonPressed = false; // Reset the pressed flag on release
-        Serial.println("z");
-        // startAPMode();
-                    unsigned long currentTime = millis();
-            if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
-                buttonPressed = true; // Valid 3-second press detected
-                // Serial.println("Cool"); // Works repeats
-
-                triggerAPMode = true;  // Set flag to trigger AP mode
-            }
-
-
+        Serial.println("Button released");
+        unsigned long currentTime = millis();
+        if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
+            Serial.println("Button held for 3+ seconds! Resetting WiFi settings...");
+            buttonPressed = true; // Valid 3-second press detected
+            triggerAPMode = true;  // Set flag to trigger AP mode
+        }
     }
 }
 
@@ -43,36 +33,9 @@ void buttonTask(void *parameter) {
     while (true) {
         // Serial.println("c");
         if (isButtonHeld) {
-            // Serial.println("-");
-
-            // unsigned long currentTime = millis();
-            // if (!buttonPressed && (currentTime - pressStartTime >= PRESS_DURATION)) {
-            //     buttonPressed = true; // Valid 3-second press detected
-            //     // Serial.println("Cool"); // Works repeats
-
-            //                 //  triggerAPMode = true;  // Set flag to trigger AP mode
-            // }
         }
 
         if (buttonPressed) {
-            // Serial.println("Button held for 3 seconds! Resetting WiFi settings...");
-            // wm.resetSettings(); // Reset WiFiManager settings
-
-            // // Start WiFiManager config portal for reconfiguration
-            // Serial.println("Starting WiFi Config Portal...");
-            // wm.startConfigPortal("ESP_Reconfigure", "reconfigure123");
-
-            // // Restart ESP after configuration to apply new settings
-            // Serial.println("Rebooting ESP...");
-            // ESP.restart();
-
-    // Serial.println("startAP Mode");         // repeats
-    // startAPMode();
-                // Serial.println("Button held for 3 seconds! Resetting WiFi settings...");
-            // startAPMode();  // Only call this once when button is held for 3 seconds
-
-
-
             buttonPressed = false; // Reset the flag after processing
         }
 
@@ -95,21 +58,4 @@ void setupWiFiAndButton() {
         1,                 // Task priority
         NULL               // Task handle
     );
-
-    // // WiFiManager setup
-    // Serial.println("Setting up WiFiManager...");
-
-    // // Connect to WiFi
-    // bool res = wm.autoConnect("AutoConnectAP", "password"); // password-protected AP
-    
-    // if (!res) {
-    //     Serial.println("Failed to connect to WiFi. Restarting...");
-    //     ESP.restart();
-    // } else {
-    //     Serial.println("Connected to WiFi!");
-    // }
-
-    // Serial.println("startAP Mode");
-    // startAPMode();
-
 }

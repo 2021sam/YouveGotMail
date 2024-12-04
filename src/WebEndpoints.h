@@ -7,7 +7,6 @@
 #include "MailService.h"      // Include your custom MailService class
 
 #include <WebServer.h>  // Include the WebServer library
-// #include <Preferences.h>      // Include Preferences for persistent storage
 #include "GlobalUtils.h"
 
 class WebEndpoints {
@@ -34,7 +33,6 @@ private:
     int& logIndex;       // Reference to log index
 
     MailService* mailService; // Use a pointer
-    // Preferences preferences;  // Preferences for managing persistent settings
     float previousDistance;
     unsigned long lastEmailTime;
     bool isWithinDeliveryWindow();

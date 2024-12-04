@@ -8,36 +8,6 @@
 #include "GlobalUtils.h"  // Include GlobalUtils for Wi-Fi credential functions
 
 
-// Preferences preferences;  // Create an instance of the Preferences class
-
-
-
-// void deleteWiFiCredentials() {
-//     preferences.begin("wifi", false);
-//     preferences.remove("wifi_ssid");
-//     preferences.remove("wifi_password");
-//     preferences.end();
-//     Serial.println("Wi-Fi credentials erased.");
-// }
-
-
-// // Function to load Wi-Fi credentials from Preferences
-// void loadWiFiCredentials(String &ssid, String &password) {
-//     preferences.begin("wifi", false);  // Open "wifi" namespace for reading credentials
-//     ssid = preferences.getString("wifi_ssid", "");  // Read SSID, or use default if not set
-//     password = preferences.getString("wifi_password", "");  // Read password, or use default
-//     preferences.end();  // Close Preferences
-// }
-
-// // Function to save Wi-Fi credentials to Preferences
-// void saveWiFiCredentials(const String &ssid, const String &password) {
-//     preferences.begin("wifi", false);  // Open "wifi" namespace for writing credentials
-//     preferences.putString("wifi_ssid", ssid);  // Save SSID
-//     preferences.putString("wifi_password", password);  // Save password
-//     preferences.end();  // Close Preferences
-// }
-
-
 // Function to start AP mode and let the user configure Wi-Fi credentials
 void startAPMode() {
     Serial.println("Entering AP mode...");
@@ -78,7 +48,6 @@ String setup_WiFi(TFTDisplay& display)
         delay(2000);
         startAPMode();
         loadWiFiCredentials(WIFI_SSID, WIFI_PASSWORD);  // Load saved Wi-Fi credentials
-        // display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
     }
     display.showStatusMessage("Connecting to Wi-Fi: " + String(WIFI_SSID) + ", PASSWORD: " + String(WIFI_PASSWORD));
     delay(3000);
@@ -94,13 +63,13 @@ String setup_WiFi(TFTDisplay& display)
 		if (WiFi.status() != WL_CONNECTED)
 		{
 
-        int BUTTON_PIN = 0;
-        if (digitalRead(BUTTON_PIN) == LOW) {
-            Serial.println("Button pressed! Interrupting Wi-Fi connection...");
-            display.showStatusMessage("Web Portal AP started: ESP_AP_Config, IP address: 192.168.4.1");
-            startAPMode();  // Start AP mode for Wi-Fi configuration
-            ESP.restart();
-        };
+            int BUTTON_PIN = 0;
+            if (digitalRead(BUTTON_PIN) == LOW) {
+                Serial.println("Button pressed! Interrupting Wi-Fi connection...");
+                display.showStatusMessage("Web Portal AP started: ESP_AP_Config, IP address: 192.168.4.1");
+                startAPMode();  // Start AP mode for Wi-Fi configuration
+                ESP.restart();
+            };
 
             // Flash the "Connecting to Wi-Fi..." text every 500ms
             unsigned long currentMillis = millis();
