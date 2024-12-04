@@ -26,9 +26,6 @@ const int TIME_BUFFER_SIZE = 30;
 extern String systemLog[20];  // Array to hold the log entries
 extern int logIndex;  // Index to track where to add the new log entry
 
-// // Function prototypes
-// void updateSensorValues(int rssi, float lux, float tof);
-
 // Struct to hold configuration settings
 struct ConfigSettings {
     String wifiHostname;       // Added field for Wi-Fi hostname
@@ -41,30 +38,11 @@ struct ConfigSettings {
     String authorPassword;
 };
 
-
-// // Define a structure to store configuration settings
-// struct ConfigSettings {
-//     String recipientEmail1;
-//     String recipientEmail2;
-//     String recipientEmail3;
-//     String smtpHost;
-//     int smtpPort;
-//     String authorEmail;
-//     String authorPassword;
-//     String wifiHostname;
-// };
-
-// Declare the function to load configuration settings
-// ConfigSettings loadConfigSettings();
-
-
-
 // Function prototypes for Wi-Fi and configuration management
 void deleteWiFiCredentials();
 void saveWiFiCredentials(const String& ssid, const String& password);
 void loadWiFiCredentials(String& ssid, String& password);
 ConfigSettings loadConfigSettings();  // Retrieve configuration settings
-
 
 // Declare functions to manage Wi-Fi and config settings
 void saveWiFiCredentials(const String &ssid, const String &password);
@@ -80,10 +58,6 @@ void loadConfigSettings(String &email1, String &email2, String &email3,
                         String &authorEmail, String &authorPassword,
                         String &wifiHostname);
 
-
-
 void updateSensorValues(int rssi, float lux, float tof);
-
-
 
 #endif // GLOBAL_UTILS_H
