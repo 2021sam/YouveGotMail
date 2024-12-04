@@ -28,7 +28,11 @@ void Alert::checkAndSendEmail() {
     if (mail_alert)
     {
         mail_alert = false;
-
+    MailService* mailService = getMailService();  // Updated function name
+    if (mailService == nullptr) {
+        Serial.println("Failed to initialize MailService!");
+        return;
+    }
         // Create the HTML message
         String currentTime = getCurrentTime();
         String htmlMsg = "<p>Time: " + currentTime + "</p>" // Include the current time
@@ -38,7 +42,7 @@ void Alert::checkAndSendEmail() {
                         "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
                         "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
 
-        mailService.sendEmail(htmlMsg);
+        mailService->sendEmail(htmlMsg);
         String statusMessage = "Email sent: Mailbox is open.";
         Serial.println(statusMessage);
         addToLog(statusMessage);

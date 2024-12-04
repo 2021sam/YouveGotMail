@@ -11,12 +11,14 @@ public:
     void sendEmail(const String& htmlMsg);
 
 
-private:
+// private:
+
     const char* senderEmail;
     const char* senderPassword;
     const char* smtpHost;
     int smtpPort;
-    const char** recipients;
+    // const char** recipients;
+    const char* recipients[3];
     int numRecipients;
     
     // These are your class members that hold the SMTP session and configuration

@@ -3,8 +3,8 @@
 #include "WebEndpoints.h"  // Include the header file for WebEndpoints
 #include "index_html.h" // Include the HTML content
 
-WebEndpoints::WebEndpoints(WebServer& server, MailService* mailService, 
-                           String* systemLog, int& logIndex) : server(server), mailService(mailService),
+WebEndpoints::WebEndpoints(WebServer& server,
+                           String* systemLog, int& logIndex) : server(server),
       systemLog(systemLog), logIndex(logIndex) {
 
     // Define the routes and associate them with the corresponding handler functions
@@ -110,7 +110,24 @@ void WebEndpoints::handleEmailAlert() {
                         "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
                         "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
 
-    mailService->sendEmail(htmlMsg);
+    // mailService->sendEmail(htmlMsg);
+    //  *****************************************************************
+
+    MailService* mailService = getMailService();  // Updated function name
+    Serial.println("mailService");
+    // Serial.println(mailService->recipients[0]);
+    Serial.println(mailService->senderEmail);
+    Serial.println("BBBBBBBBBBBBBBBBB");
+    if (mailService == nullptr) {
+        Serial.println("Failed to initialize MailService!");
+        return;
+    }
+        Serial.println("AAAAAAAAAAAAAAA");
+        mailService->sendEmail(htmlMsg);
+        String statusMessage = "Email sent: Mailbox is open.";
+        Serial.println(statusMessage);
+        addToLog(statusMessage);
+
     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
 }
 

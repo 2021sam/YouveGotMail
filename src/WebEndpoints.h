@@ -12,8 +12,7 @@
 class WebEndpoints {
 public:
     // Constructor that takes references to systemLog and logIndex
-    WebEndpoints(WebServer& server, MailService* mailService,
-                 String* systemLog, int& logIndex);
+    WebEndpoints(WebServer& server, String* systemLog, int& logIndex);
 
     // Method declarations for handling different routes
     void handleRoot();
@@ -32,7 +31,7 @@ private:
     String* systemLog;   // Pointer to system log
     int& logIndex;       // Reference to log index
 
-    MailService* mailService; // Use a pointer
+    // MailService* mailService; // Use a pointer
     float previousDistance;
     unsigned long lastEmailTime;
     bool isWithinDeliveryWindow();

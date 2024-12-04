@@ -64,7 +64,7 @@ LightSensor lightSensor(LIGHT_SENSOR_ADDRESS);  // Pass the address to the light
     //     3                      // Number of recipients
     // );
 // Declare MailService globally as a pointer
-MailService* mailService = nullptr;
+// MailService* mailService = nullptr;
 
 
 // Email-related variables
@@ -83,7 +83,7 @@ WebServer server(80); // Web server listening on port 80
 
 
 // Commented 12/3      1
-WebEndpoints endpoints(server, mailService, systemLog, logIndex);   
+WebEndpoints endpoints(server, systemLog, logIndex);   
 
 
 
@@ -105,12 +105,6 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
-
-
-
-
-
-
     // Load configuration settings
     ConfigSettings config = loadConfigSettings();
 
@@ -125,26 +119,20 @@ void setup() {
         config.recipientEmail3.c_str()
     };
 
-    // Dynamically initialize MailService      12/3     2
-    mailService = new MailService(
-        senderEmail,           // Sender email
-        senderPassword,        // Sender password
-        smtpHost,              // SMTP host
-        config.smtpPort,       // SMTP port
-        recipients,            // Recipients
-        3                      // Number of recipients
-    );
+    // // Dynamically initialize MailService      12/3     2
+    // mailService = new MailService(
+    //     senderEmail,           // Sender email
+    //     senderPassword,        // Sender password
+    //     smtpHost,              // SMTP host
+    //     config.smtpPort,       // SMTP port
+    //     recipients,            // Recipients
+    //     3                      // Number of recipients
+    // );
 
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
     delay(2000);
-
-
-
-
-
-
 
 
     // // Setup Wi-Fi connection

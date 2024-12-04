@@ -1,6 +1,7 @@
 #ifndef GLOBAL_UTILS_H
 #define GLOBAL_UTILS_H
 
+#include "MailService.h"
 #include <Arduino.h>
 #include <ctime>
 
@@ -59,5 +60,7 @@ void loadConfigSettings(String &email1, String &email2, String &email3,
                         String &wifiHostname);
 
 void updateSensorValues(int rssi, float lux, float tof);
+
+MailService* getMailService();
 
 #endif // GLOBAL_UTILS_H
