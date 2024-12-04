@@ -154,6 +154,9 @@ void WebEndpoints::handleLog() {
 void WebEndpoints::showConfigForm() {
     ConfigSettings config = loadConfigSettings();  // Load configuration using the global function
     Serial.println(config.recipientEmail1);
+    String wifiSsid, wifiPassword;
+    loadWiFiCredentials(wifiSsid, wifiPassword);  // Load Wi-Fi credentials using the wifi namespace
+
 
     // Generate the configuration form
     String response = "<html><head><style>"
@@ -164,6 +167,13 @@ void WebEndpoints::showConfigForm() {
                       "</style></head><body>";
     response += "<h1>Device Configuration</h1>";
     response += "<form action='/config' method='POST'>";
+
+ // Wi-Fi settings
+    response += "<label for='wifi_ssid'>Wi-Fi SSID:</label>";
+    response += "<input type='text' name='wifi_ssid' value='" + wifiSsid + "'><br>";
+    response += "<label for='wifi_password'>Wi-Fi Password:</label>";
+    response += "<input type='text' name='wifi_password' value='" + wifiPassword + "'><br>";
+  
     response += "<label for='recipient_email_1'>Recipient Email 1:</label>";
     response += "<input type='email' name='recipient_email_1' value='" + config.recipientEmail1 + "'><br>";
     response += "<label for='recipient_email_2'>Recipient Email 2:</label>";
@@ -173,7 +183,7 @@ void WebEndpoints::showConfigForm() {
     response += "<label for='author_email'>Sender Email:</label>";
     response += "<input type='email' name='author_email' value='" + config.authorEmail + "'><br>";
     response += "<label for='author_password'>Sender Email Password:</label>";
-    response += "<input type='password' name='author_password' value='" + config.authorPassword + "'><br>";
+    response += "<input type='text' name='author_password' value='" + config.authorPassword + "'><br>";
     response += "<label for='smtp_host'>SMTP Host:</label>";
     response += "<input type='text' name='smtp_host' value='" + config.smtpHost + "'><br>";
     response += "<label for='smtp_port'>SMTP Port:</label>";
@@ -187,46 +197,16 @@ void WebEndpoints::showConfigForm() {
 }
 
 
-// void WebEndpoints::handleConfig() {
-//     // Retrieve form data
-//     ConfigSettings config;
-//     config.recipientEmail1 = server.arg("recipient_email_1");
-//     config.recipientEmail2 = server.arg("recipient_email_2");
-//     config.recipientEmail3 = server.arg("recipient_email_3");
-//     config.authorEmail = server.arg("author_email");
-//     config.authorPassword = server.arg("author_password");
-//     config.smtpHost = server.arg("smtp_host");
-//     config.smtpPort = server.arg("smtp_port").toInt();
-//     config.wifiHostname = server.arg("wifi_hostname");
-
-//     saveConfigSettings(config);  // Save configuration using the global function
-
-//     Serial.println("Configuration saved!");
-//     server.send(200, "text/html", "<h1>Configuration Saved</h1><p><a href='/'>Go back</a></p>");
-// }
-
-
 void WebEndpoints::handleConfig() {
     if (server.hasArg("email1") || server.hasArg("email2") || server.hasArg("email3") || 
         server.hasArg("smtp") || server.hasArg("port") || 
         server.hasArg("author_email") || server.hasArg("author_password") || 
         server.hasArg("hostname")) {
 
-        // // Read the fields from the POST request
-        // String email1 = server.arg("email1");
-        // String email2 = server.arg("email2");
-        // String email3 = server.arg("email3");
-        // String smtpHost = server.arg("smtp");
-        // int smtpPort = server.arg("port").toInt();
-        // String authorEmail = server.arg("author_email");
-        // String authorPassword = server.arg("author_password");
-        // String wifiHostname = server.arg("hostname");
-        // Serial.println("***************");
-        // Serial.println(email1);
+        // Read the fields from the POST request
+        String wifiSsid = server.arg("wifi_ssid");
+        String wifiPassword = server.arg("wifi_password");
 
-
-
-     // Read the fields from the POST request
         String email1 = server.arg("recipient_email_1");
         String email2 = server.arg("recipient_email_2");
         String email3 = server.arg("recipient_email_3");
@@ -237,12 +217,7 @@ void WebEndpoints::handleConfig() {
         String wifiHostname = server.arg("wifi_hostname");
 
 
-
-
-
-
-
-
+        saveWiFiCredentials(wifiSsid, wifiPassword);
         // Save the settings using the global utility function
         saveConfigSettings(email1, email2, email3, smtpHost, smtpPort, authorEmail, authorPassword, wifiHostname);
 
