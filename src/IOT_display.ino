@@ -3,16 +3,6 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <WebServer.h>
-// #include "../lib/TFTDisplay.h"  // Include the TFT display class
-// #include "../lib/DistanceSensor.h" // Include the new header file
-// #include "../lib/LightSensor.h"  // Include your custom LightSensor header
-// #include "../lib/WebEndpoints.h"  // Include the WebEndpoints class
-// #include "../lib/MailService.h"  // Include the MailService class
-// #include "../include/index_html.h"  // Include the HTML header file
-// #include "../lib/Alert.h"
-// #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
-// #include "../lib/WiFiManager.h"  // Include the new WiFiManager header  -- After credentials.h are included.
-
 #include "TFTDisplay.h"  // Include the TFT display class
 #include "DistanceSensor.h" // Include the new header file
 #include "LightSensor.h"  // Include your custom LightSensor header
@@ -20,7 +10,6 @@
 #include "MailService.h"  // Include the MailService class
 #include "index_html.h"  // Include the HTML header file
 #include "Alert.h"
-// #include "credentials.h"  // Include your credentials for Wi-Fi and email setup
 #include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
 #include "GlobalUtils.h"
 #include <WiFiManager.h> // Include WiFiManager
@@ -28,7 +17,6 @@
 
 #define LED_PIN 21
 TFTDisplay display;  // Create a TFTDisplay object
-
 
 // Define I²C addresses for both sensors
 #define DISTANCE_SENSOR_ADDRESS 0x29  // Custom I²C address for the distance sensor
@@ -38,34 +26,6 @@ TFTDisplay display;  // Create a TFTDisplay object
 // Instantiate the TFT display, sensors, and mail service
 DistanceSensor distanceSensor(DISTANCE_SENSOR_ADDRESS);  // Pass the address to the distance sensor
 LightSensor lightSensor(LIGHT_SENSOR_ADDRESS);  // Pass the address to the light sensor
-// MailService mailService(AUTHOR_EMAIL, AUTHOR_PASSWORD, SMTP_HOST, SMTP_PORT, recipients, NUM_RECIPIENTS);
-
-    // // Load configuration settings
-    // ConfigSettings config = loadConfigSettings();
-
-    // // Convert String values to const char*
-    // const char* senderEmail = config.authorEmail.c_str();
-    // const char* senderPassword = config.authorPassword.c_str();
-    // const char* smtpHost = config.smtpHost.c_str();
-
-    // const char* recipients[3] = {
-    //     config.recipientEmail1.c_str(),
-    //     config.recipientEmail2.c_str(),
-    //     config.recipientEmail3.c_str()
-    // };
-
-    // // Dynamically initialize MailService with loaded configuration
-    // MailService mailService(
-    //     senderEmail,           // Sender email
-    //     senderPassword,        // Sender password
-    //     smtpHost,              // SMTP host
-    //     config.smtpPort,       // SMTP port
-    //     recipients,            // Recipients
-    //     3                      // Number of recipients
-    // );
-// Declare MailService globally as a pointer
-// MailService* mailService = nullptr;
-
 
 // Email-related variables
 unsigned long startTime;
@@ -77,16 +37,7 @@ const int deliveryStartHour = 8;  // 8 AM
 const int deliveryEndHour = 17;   // 5 PM
 
 WebServer server(80); // Web server listening on port 80
-
-
-// WebEndpoints endpoints(server, &mailService, systemLog, logIndex);
-
-
-// Commented 12/3      1
 WebEndpoints endpoints(server, systemLog, logIndex);   
-
-
-
 
 // Pointer for Alert class
 Alert* alert = nullptr;
@@ -105,61 +56,14 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
-
-
-
-
-    // // delay(10000);
-    // // Load configuration settings
-    // ConfigSettings config = loadConfigSettings();
-
-    // // Convert String values to const char*
-    // const char* senderEmail = config.authorEmail.c_str();
-    // const char* senderPassword = config.authorPassword.c_str();
-    // const char* smtpHost = config.smtpHost.c_str();
-
-    // const char* recipients[3] = {
-    //     config.recipientEmail1.c_str(),
-    //     config.recipientEmail2.c_str(),
-    //     config.recipientEmail3.c_str()
-    // };
-
-    // // Initialize globalMailService
-    // globalMailService = new MailService(
-    //     senderEmail,           // Sender email
-    //     senderPassword,        // Sender password
-    //     smtpHost,              // SMTP host
-    //     config.smtpPort,       // SMTP port
-    //     recipients,            // Recipients
-    //     3                      // Number of recipients
-    // );
-
-    // if (globalMailService == nullptr) {
-    //     Serial.println("Failed to initialize MailService!");
-    // } else {
-    //     Serial.println("MailService initialized successfully.");
-    // }
-
-    // Serial.println("*************************************");
-    // // Serial.println(senderEmail);
-    // Serial.println(globalMailService->senderEmail);
-
       // Initialize the globalMailService
     initializeGlobalMailService();
-
-
 
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);
     display.showStatusMessage(ipAddress);
     delay(2000);
 
-
-    // // Setup Wi-Fi connection
-    // String ipAddress = setup_WiFi(display);
-    
-    // display.showStatusMessage(ipAddress);
-    // delay(2000);
     attachInterrupt(BUTTON_PIN, handleButtonPress, CHANGE); // Trigger on both press and release
     // Initialize Wi-Fi and button functionality
     setupWiFiAndButton();

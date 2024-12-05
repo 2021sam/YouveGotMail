@@ -76,23 +76,11 @@ bool MailService::sendEmail(const String &htmlMsg)
             Serial.println(i);
         }
     }
-    // Serial.println("CCCCCCCCCCCCCCCCCC");
-    //    message.addRecipient(F("Recipient"),  ("2018supersam@gmail.com"));  // Hardcode recip
 
     message.html.content = htmlMsg;
     message.html.charSet = F("utf-8");
     // Connect to SMTP server
     int r = smtp.connect(&config); // Capture the return value
-
-    // // Before sending email, check if senderEmail is valid
-    // Serial.print("Sender Email: ");
-    // Serial.println(senderEmail); // Ensure the sender email is correct
-
-    // // Check SMTP settings before sending
-    // Serial.print("SMTP Server: ");
-    // Serial.println(smtpHost);
-    // Serial.print("SMTP Port: ");
-    // Serial.println(smtpPort);
 
     if (r == 1)
     { // If successful connection (r == 1)
