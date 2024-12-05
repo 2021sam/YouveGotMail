@@ -61,7 +61,6 @@ void loadConfigSettings(String &email1, String &email2, String &email3,
 
 void updateSensorValues(int rssi, float lux, float tof);
 
-// MailService* getMailService();
 // Declare a global pointer to MailService
 extern MailService* globalMailService;  
 

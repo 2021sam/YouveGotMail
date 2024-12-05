@@ -158,54 +158,6 @@ void saveConfigSettings(const String& email1, const String& email2, const String
 }
 
 
-// MailService* getMailService() {
-//     ConfigSettings config = loadConfigSettings();
-
-//     // Copy strings to local variables to ensure valid memory
-//     String senderEmailStr = config.authorEmail;
-//     String senderPasswordStr = config.authorPassword;
-//     String smtpHostStr = config.smtpHost;
-
-//     // Allocate a local array for recipient emails
-//     const char* recipients[3] = { nullptr, nullptr, nullptr };
-
-//     if (!config.recipientEmail1.isEmpty()) {
-//         recipients[0] = config.recipientEmail1.c_str();
-//     }
-//     if (!config.recipientEmail2.isEmpty()) {
-//         recipients[1] = config.recipientEmail2.c_str();
-//     }
-//     if (!config.recipientEmail3.isEmpty()) {
-//         recipients[2] = config.recipientEmail3.c_str();
-//     }
-
-//     // Log recipients for debugging
-//     for (int i = 0; i < 3; i++) {
-//         if (recipients[i] != nullptr) {
-//             Serial.printf("Recipient[%d]: %s\n", i, recipients[i]);
-//         } else {
-//             Serial.printf("Recipient[%d]: None\n", i);
-//         }
-//     }
-
-//     Serial.println("getMailService - end");
-
-//     // Create and return a new MailService instance
-//     return new MailService(
-//         senderEmailStr.c_str(),
-//         senderPasswordStr.c_str(),
-//         smtpHostStr.c_str(),
-//         config.smtpPort,
-//         recipients,
-//         3
-//     );
-// }
-
-
-// GlobalUtils.cpp
-// #include "GlobalUtils.h"
-// #include "MailService.h"
-
 void initializeGlobalMailService() {
     // Ensure the existing instance is deleted
     if (globalMailService != nullptr) {
@@ -237,8 +189,6 @@ void initializeGlobalMailService() {
         Serial.println("Failed to initialize globalMailService!");
     } else {
         Serial.println("globalMailService initialized successfully.");
-        // Serial.println("Sender Email: ");
-        // Serial.println(globalMailService->senderEmail);
     }
 }
 
