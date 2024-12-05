@@ -75,6 +75,10 @@ void initializeMailService(
     int numRecipients
 );
 
+// GlobalUtils.h
+void initializeGlobalMailService();
+
+
 // Function to send an email using the global MailService
 void sendGlobalEmail(const String& htmlMsg);
 

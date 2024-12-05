@@ -105,26 +105,27 @@ void setup() {
     // Configure time for Pacific Standard Time (UTC-8)
     configTime(-8 * 3600, 0, "pool.ntp.org");       //  This requires a small delay to configure time.
 
-    delay(10000);
-    // Load configuration settings
-    ConfigSettings config = loadConfigSettings();
 
-    // Convert String values to const char*
-    const char* senderEmail = config.authorEmail.c_str();
-    const char* senderPassword = config.authorPassword.c_str();
-    const char* smtpHost = config.smtpHost.c_str();
 
-    const char* recipients[3] = {
-        config.recipientEmail1.c_str(),
-        config.recipientEmail2.c_str(),
-        config.recipientEmail3.c_str()
-    };
 
-    // Serial.println("*************************************");
-    // Serial.println(senderEmail);
 
-    // // Dynamically initialize MailService      12/3     2
-    // mailService = new MailService(
+    // // delay(10000);
+    // // Load configuration settings
+    // ConfigSettings config = loadConfigSettings();
+
+    // // Convert String values to const char*
+    // const char* senderEmail = config.authorEmail.c_str();
+    // const char* senderPassword = config.authorPassword.c_str();
+    // const char* smtpHost = config.smtpHost.c_str();
+
+    // const char* recipients[3] = {
+    //     config.recipientEmail1.c_str(),
+    //     config.recipientEmail2.c_str(),
+    //     config.recipientEmail3.c_str()
+    // };
+
+    // // Initialize globalMailService
+    // globalMailService = new MailService(
     //     senderEmail,           // Sender email
     //     senderPassword,        // Sender password
     //     smtpHost,              // SMTP host
@@ -133,25 +134,20 @@ void setup() {
     //     3                      // Number of recipients
     // );
 
-  // Initialize globalMailService
-    globalMailService = new MailService(
-        senderEmail,           // Sender email
-        senderPassword,        // Sender password
-        smtpHost,              // SMTP host
-        config.smtpPort,       // SMTP port
-        recipients,            // Recipients
-        3                      // Number of recipients
-    );
+    // if (globalMailService == nullptr) {
+    //     Serial.println("Failed to initialize MailService!");
+    // } else {
+    //     Serial.println("MailService initialized successfully.");
+    // }
 
-    if (globalMailService == nullptr) {
-        Serial.println("Failed to initialize MailService!");
-    } else {
-        Serial.println("MailService initialized successfully.");
-    }
+    // Serial.println("*************************************");
+    // // Serial.println(senderEmail);
+    // Serial.println(globalMailService->senderEmail);
 
-    Serial.println("*************************************");
-    // Serial.println(senderEmail);
-    Serial.println(globalMailService->senderEmail);
+      // Initialize the globalMailService
+    initializeGlobalMailService();
+
+
 
     // Setup Wi-Fi connection
     String ipAddress = setup_WiFi(display);

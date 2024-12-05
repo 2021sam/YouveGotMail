@@ -3,8 +3,7 @@
 #include "WebEndpoints.h"  // Include the header file for WebEndpoints
 #include "index_html.h" // Include the HTML content
 
-WebEndpoints::WebEndpoints(WebServer& server,
-                           String* systemLog, int& logIndex) : server(server),
+WebEndpoints::WebEndpoints(WebServer& server, String* systemLog, int& logIndex) : server(server),
       systemLog(systemLog), logIndex(logIndex) {
 
     // Define the routes and associate them with the corresponding handler functions
@@ -149,13 +148,6 @@ void WebEndpoints::handleEmailAlert() {
                      "<p>RSSI: " + String(currentRSSI) + " dBm</p>"
                      "<p>Delivery Window Status: " + String(isWithinDeliveryWindow() ? "High" : "Low") + " Alert.</p>";
 
-    // Debug information
-    Serial.println("Using globalMailService to send email.");
-    Serial.print("Sender Email: ");
-    Serial.println("*************************************");
-    Serial.println(globalMailService->senderEmail);
-
-
     // Attempt to send the email
     if (!globalMailService->sendEmail(htmlMsg)) {
         String errorMessage = "Failed to send email: Check your SMTP configuration.";
@@ -174,13 +166,6 @@ void WebEndpoints::handleEmailAlert() {
     server.send(200, "text/html", "<h1>Test Email Sent Successfully!</h1><p><a href='/'>Go back</a></p>");
 }
 
-
-
-
-
-
-
-
 // Check if the current time is within the delivery window
 bool WebEndpoints::isWithinDeliveryWindow() {
     time_t now = time(nullptr);
@@ -188,7 +173,6 @@ bool WebEndpoints::isWithinDeliveryWindow() {
     int currentHour = timeinfo->tm_hour;
     return (currentHour >= 8 && currentHour < 17);  // Delivery window is between 8 AM and 5 PM
 }
-
 
 void WebEndpoints::handleLog() {
     String response = "<html><head><style>"
@@ -215,7 +199,6 @@ void WebEndpoints::handleLog() {
     // Send the response as HTML
     server.send(200, "text/html", response);
 }
-
 
 
 void WebEndpoints::showConfigForm() {
@@ -266,7 +249,6 @@ void WebEndpoints::showConfigForm() {
 
 void WebEndpoints::handleConfig() {
     if (true) {
-
         // Read the fields from the POST request
         String wifiSsid = server.arg("wifi_ssid");
         String wifiPassword = server.arg("wifi_password");
@@ -280,10 +262,12 @@ void WebEndpoints::handleConfig() {
         int smtpPort = server.arg("smtp_port").toInt();  // Convert port to integer
         String wifiHostname = server.arg("wifi_hostname");
 
-
         saveWiFiCredentials(wifiSsid, wifiPassword);
         // Save the settings using the global utility function
         saveConfigSettings(email1, email2, email3, smtpHost, smtpPort, authorEmail, authorPassword, wifiHostname);
+
+        // Reinitialize MailService with the updated settings
+        initializeGlobalMailService();
 
         Serial.println("Configuration saved successfully!");
         server.send(200, "text/html", "<h1>Configuration Saved!</h1><p><a href='/'>Go back</a></p>");
