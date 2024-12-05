@@ -21,7 +21,6 @@ public:
     const char* smtpHost;
     int smtpPort;
     const char** recipients;
-    // const char* recipients[3];
     int numRecipients;
     
     // These are your class members that hold the SMTP session and configuration

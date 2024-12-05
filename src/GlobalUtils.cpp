@@ -1,5 +1,4 @@
 #include "GlobalUtils.h"  // Include the header to match the declarations
-// #include "MailService.h"  // Include MailService class
 #include <Preferences.h>
 
 // Define the global variables (memory allocation)
@@ -16,7 +15,6 @@ int minRSSI = 32767, maxRSSI = -32768;
 // Declare and initialize the global variable
 MailService* globalMailService = nullptr;
 
-
 String systemLog[20];  // Array to hold the log entries
 int logIndex = 0;      // Index to track where to add the new log entry
 
@@ -26,11 +24,9 @@ Preferences preferences;  // Preferences instance for configuration storage
 String getCurrentTime() {
     time_t now = time(nullptr);
     struct tm* timeinfo = localtime(&now);
-
     const int TIME_BUFFER_SIZE = 30;
     char buffer[TIME_BUFFER_SIZE];  // Buffer to hold the formatted time
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-
     return String(buffer);
 }
 
@@ -39,7 +35,6 @@ void addToLog(String message) {
     String timestamp = getCurrentTime();  // Get current time via the Alert system
     String logMessage = "[" + timestamp + "] " + message + "\n";  // Add a timestamp and message to the log
     Serial.println(logMessage);  // Print message to serial monitor for debugging
-
     systemLog[logIndex] = logMessage;
     logIndex = (logIndex + 1) % 10;  // Wrap around after 10 entries
 }
@@ -59,7 +54,6 @@ void updateSensorValues(int rssi, float lux, float tof) {
     }
     else
     {
-
         if (currentTof < previousTof + 1)
         {
             if (tof > maxTof_inClosedState)
@@ -121,7 +115,6 @@ void loadWiFiCredentials(String& ssid, String& password) {
 ConfigSettings loadConfigSettings() {
     ConfigSettings config;
     preferences.begin("config", true);
-
     config.recipientEmail1 = preferences.getString("recip_email_1", "");
     config.recipientEmail2 = preferences.getString("recip_email_2", "");
     config.recipientEmail3 = preferences.getString("recip_email_3", "");
@@ -130,8 +123,8 @@ ConfigSettings loadConfigSettings() {
     config.wifiHostname = preferences.getString("wifi_hostname", "Got_Mail");
     config.authorEmail = preferences.getString("author_email", "");
     config.authorPassword = preferences.getString("author_password", "");
-
     preferences.end();
+
     Serial.println("Loaded Config Settings:");
     Serial.println("Author Email: " + config.authorEmail);
     Serial.println("SMTP Host: " + config.smtpHost);
@@ -165,48 +158,48 @@ void saveConfigSettings(const String& email1, const String& email2, const String
 }
 
 
-MailService* getMailService() {
-    ConfigSettings config = loadConfigSettings();
+// MailService* getMailService() {
+//     ConfigSettings config = loadConfigSettings();
 
-    // Copy strings to local variables to ensure valid memory
-    String senderEmailStr = config.authorEmail;
-    String senderPasswordStr = config.authorPassword;
-    String smtpHostStr = config.smtpHost;
+//     // Copy strings to local variables to ensure valid memory
+//     String senderEmailStr = config.authorEmail;
+//     String senderPasswordStr = config.authorPassword;
+//     String smtpHostStr = config.smtpHost;
 
-    // Allocate a local array for recipient emails
-    const char* recipients[3] = { nullptr, nullptr, nullptr };
+//     // Allocate a local array for recipient emails
+//     const char* recipients[3] = { nullptr, nullptr, nullptr };
 
-    if (!config.recipientEmail1.isEmpty()) {
-        recipients[0] = config.recipientEmail1.c_str();
-    }
-    if (!config.recipientEmail2.isEmpty()) {
-        recipients[1] = config.recipientEmail2.c_str();
-    }
-    if (!config.recipientEmail3.isEmpty()) {
-        recipients[2] = config.recipientEmail3.c_str();
-    }
+//     if (!config.recipientEmail1.isEmpty()) {
+//         recipients[0] = config.recipientEmail1.c_str();
+//     }
+//     if (!config.recipientEmail2.isEmpty()) {
+//         recipients[1] = config.recipientEmail2.c_str();
+//     }
+//     if (!config.recipientEmail3.isEmpty()) {
+//         recipients[2] = config.recipientEmail3.c_str();
+//     }
 
-    // Log recipients for debugging
-    for (int i = 0; i < 3; i++) {
-        if (recipients[i] != nullptr) {
-            Serial.printf("Recipient[%d]: %s\n", i, recipients[i]);
-        } else {
-            Serial.printf("Recipient[%d]: None\n", i);
-        }
-    }
+//     // Log recipients for debugging
+//     for (int i = 0; i < 3; i++) {
+//         if (recipients[i] != nullptr) {
+//             Serial.printf("Recipient[%d]: %s\n", i, recipients[i]);
+//         } else {
+//             Serial.printf("Recipient[%d]: None\n", i);
+//         }
+//     }
 
-    Serial.println("getMailService - end");
+//     Serial.println("getMailService - end");
 
-    // Create and return a new MailService instance
-    return new MailService(
-        senderEmailStr.c_str(),
-        senderPasswordStr.c_str(),
-        smtpHostStr.c_str(),
-        config.smtpPort,
-        recipients,
-        3
-    );
-}
+//     // Create and return a new MailService instance
+//     return new MailService(
+//         senderEmailStr.c_str(),
+//         senderPasswordStr.c_str(),
+//         smtpHostStr.c_str(),
+//         config.smtpPort,
+//         recipients,
+//         3
+//     );
+// }
 
 
 // GlobalUtils.cpp
@@ -248,7 +241,6 @@ void initializeGlobalMailService() {
         // Serial.println(globalMailService->senderEmail);
     }
 }
-
 
 
 void sendGlobalEmail(const String& htmlMsg) {
