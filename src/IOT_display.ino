@@ -7,7 +7,6 @@
 #include "DistanceSensor.h" // Include the new header file
 #include "LightSensor.h"  // Include your custom LightSensor header
 #include "WebEndpoints.h"  // Include the WebEndpoints class
-#include "MailService.h"  // Include the MailService class
 #include "index_html.h"  // Include the HTML header file
 #include "Alert.h"
 #include "WiFiMaintenance.h"  // Include the new WiFiManager header  -- After credentials.h are included.
