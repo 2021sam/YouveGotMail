@@ -49,9 +49,6 @@ bool MailService::sendEmail(const String& htmlMsg) {
     SMTP_Message message;
     message.sender.name = F("ESP Mail");
     message.sender.email = senderEmail;
-    // message.sender.email = F("2020sentinel@gmail.com");
-
-
     message.subject = F("You've Got Mail!");
 
     // // Add recipients from the list
@@ -74,17 +71,19 @@ bool MailService::sendEmail(const String& htmlMsg) {
 
 //     numRecipients = 1;
 
-// for (int i = 0; i < numRecipients; i++) {
-//     if (recipients[i] != nullptr && strlen(recipients[i]) > 0) {  // Check if the recipient email is not blank
-//         Serial.print("Adding recipient: ");
-//         Serial.println(recipients[i]);
-//         message.addRecipient(F("Recipient"), recipients[i]);
-//     } else {
-//         Serial.print("Skipping empty recipient for index: ");
-//         Serial.println(i);
-//     }
-// }
-//     Serial.println("CCCCCCCCCCCCCCCCCC");
+    for (int i = 0; i < numRecipients; i++) {
+        if (recipients[i] != nullptr && strlen(recipients[i]) > 0) {  // Check if the recipient email is not blank
+            Serial.print("Adding recipient: ");
+            Serial.println(recipients[i]);
+            message.addRecipient(F("Recipient"), recipients[i]);
+        } else {
+            Serial.print("Skipping empty recipient for index: ");
+            Serial.println(i);
+        }
+    }
+    Serial.println("CCCCCCCCCCCCCCCCCC");
+
+
    message.addRecipient(F("Recipient"),  ("2018supersam@gmail.com"));  // Hardcode recip
 
     message.html.content = htmlMsg;
