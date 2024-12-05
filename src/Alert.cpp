@@ -1,8 +1,6 @@
 #include "Alert.h"
 
-Alert::Alert(MailService &mailService, int deliveryStartHour, int deliveryEndHour)
-    : mailService(mailService),
-      deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour)
+Alert::Alert(int deliveryStartHour, int deliveryEndHour) : deliveryStartHour(deliveryStartHour), deliveryEndHour(deliveryEndHour)
 {
     startDelayTime = millis();
 }

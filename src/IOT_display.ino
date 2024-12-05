@@ -86,8 +86,7 @@ void setup() {
     // alert = new Alert(*mailService, deliveryStartHour, deliveryEndHour);
 
     // Initialize Alert with the dereferenced MailService pointer
-    // alert = new Alert(*mailService, deliveryStartHour, deliveryEndHour);
-
+    alert = new Alert(deliveryStartHour, deliveryEndHour);
 
     // addToLog("Device IP Address: " + ipAddress);
     addToLog("Initial Distance: " + String(previousTof));
