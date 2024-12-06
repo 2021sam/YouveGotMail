@@ -72,11 +72,11 @@ void setup() {
 
     // Initialize the distance sensor
     distanceSensor.begin();  // Get the return value of begin()
-    String statusMessage = "Distance Sensor online status: ";
+    String statusMessage = "Distance Sensor status: ";
     statusMessage += distanceSensor.isOnline() ? "Online" : "Offline";
     display.showStatusMessage(statusMessage);  // Display the message on the TFT screen
     Serial.println(statusMessage);  // Output the same status to the serial monitor
-
+    delay(3000);
     // Start the web server
     server.begin();
     Serial.println("WebServer started");
