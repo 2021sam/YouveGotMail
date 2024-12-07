@@ -13,8 +13,8 @@ MailService::MailService(const char *senderEmail, const char *senderPassword, co
     Serial.println(this->senderEmail);
 
     // Initialize the recipients array
-    this->recipients = new const char *[numRecipients];
-    for (int i = 0; i < numRecipients; i++)
+
+    for (int i = 0; i < 3; i++)
     {
         if (recipients[i] != nullptr && strlen(recipients[i]) > 0)
         {
