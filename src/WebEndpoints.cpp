@@ -256,8 +256,6 @@ void WebEndpoints::handleConfig()
         // Save the settings using the global utility function
         saveConfigSettings(email1, email2, email3, smtpHost, smtpPort, authorEmail, authorPassword, wifiHostname);
 
-        // Reinitialize MailService with the updated settings
-        initializeGlobalMailService();
 
         Serial.println("Configuration saved successfully!");
         server.send(200, "text/html", "<h1>Configuration Saved!</h1><p><a href='/'>Go back</a></p>");

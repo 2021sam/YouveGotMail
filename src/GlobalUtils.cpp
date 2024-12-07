@@ -158,41 +158,6 @@ void saveConfigSettings(const String& email1, const String& email2, const String
 }
 
 
-void initializeGlobalMailService() {
-    // Ensure the existing instance is deleted
-    if (globalMailService != nullptr) {
-        delete globalMailService;
-        globalMailService = nullptr;
-        Serial.println("Deleted old instance of globalMailService.");
-    }
-
-    // Load configuration settings
-    ConfigSettings config = loadConfigSettings();
-
-    // Convert String values to const char*
-    const char* senderEmail = config.authorEmail.c_str();
-    const char* senderPassword = config.authorPassword.c_str();
-    const char* smtpHost = config.smtpHost.c_str();
-
-    const char* recipients[3] = {
-        config.recipientEmail1.c_str(),
-        config.recipientEmail2.c_str(),
-        config.recipientEmail3.c_str()
-    };
-
-    // Create a new instance
-    globalMailService = new MailService(
-        senderEmail, senderPassword, smtpHost, config.smtpPort, recipients, 3
-    );
-
-    if (globalMailService == nullptr) {
-        Serial.println("Failed to initialize globalMailService!");
-    } else {
-        Serial.println("globalMailService initialized successfully.");
-    }
-}
-
-
 void sendGlobalEmail(const String& htmlMsg) {
     if (globalMailService) {
         globalMailService->sendEmail(htmlMsg);

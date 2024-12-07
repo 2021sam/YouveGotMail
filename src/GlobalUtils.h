@@ -64,18 +64,6 @@ void updateSensorValues(int rssi, float lux, float tof);
 // Declare a global pointer to MailService
 extern MailService* globalMailService;  
 
-// Function to initialize the global MailService
-void initializeMailService(
-    const char* senderEmail,
-    const char* senderPassword,
-    const char* smtpHost,
-    int smtpPort,
-    const char* recipients[],
-    int numRecipients
-);
-
-// GlobalUtils.h
-void initializeGlobalMailService();
 
 
 // Function to send an email using the global MailService
